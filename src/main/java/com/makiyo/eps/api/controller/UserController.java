@@ -4,6 +4,7 @@ import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaMode;
 import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.json.JSONUtil;
 import com.makiyo.eps.api.controller.form.*;
 import com.makiyo.eps.api.pojo.TbUser;
@@ -179,5 +180,23 @@ public class UserController {
             StpUtil.logoutByLoginId(form.getUserId());
         }
         return Response.ok().put("rows",rows);
+    }
+    @PostMapping("/deleteUserByIds")
+    @SaCheckPermission(value = {"ROOT", "USER:DELETE"}, mode = SaMode.OR)
+    @Operation(summary = "删除用户")
+    public Response deleteUserById(@Valid @RequestBody DeleteUserByIdForm form)
+    {
+        Integer userId = StpUtil.getLoginIdAsInt();
+        if(ArrayUtil.contains(form.getIds(),userId)){
+            return Response.error("您不能删除自己的账户");
+        }
+        int rows = userService.deleteUserById(form.getIds());
+        if (rows > 0) {
+            //把被删除的用户踢下线
+            for (Integer id : form.getIds()) {
+                StpUtil.logoutByLoginId(id);
+            }
+        }
+        return Response.ok().put("rows", rows);
     }
 }
