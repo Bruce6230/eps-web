@@ -161,6 +161,82 @@ export default {
 		};
 	},
 	methods: {
+		loadDataList: function() {
+		    let that = this;
+		    that.dataListLoading = true;
+		    let data = {
+		        name: that.dataForm.name,
+		        mold: that.dataForm.mold,
+		        page: that.pageIndex,
+		        length: that.pageSize
+		    };
+		    if (that.dataForm.date == null || that.dataForm.date == '') {
+		        data.date = dayjs(new Date()).format('YYYY-MM-DD');
+		    } else {
+		        data.date = dayjs(that.dataForm.date).format('YYYY-MM-DD');
+		    }
+		    that.$http('meeting/searchOfflineMeetingByPage', 'POST', data, true, function(resp) {
+		        let page = resp.page;
+		        let temp = [];
+		        for (let room of page.list) {
+		            let json = {};
+		            json.name = room.name;
+		            json.meeting = {};
+		            if (room.hasOwnProperty('meeting')) {
+		                for (let meeting of room.meeting) {
+		                    let color;
+		                    if (meeting.status == 1) {
+		                        color = 'yellow';
+		                    } else if (meeting.status == 3) {
+		                        color = 'blue';
+		                    } else if (meeting.status == 4) {
+		                        color = 'pink';
+		                    } else if (meeting.status == 5) {
+		                        color = 'gray';
+		                    }
+		                    json.meeting[meeting.start] = meeting.time + '#' + color;
+		                }
+		            }
+		            temp.push(json);
+		        }
+		        that.gantt.meetingRoom = temp;
+		        that.totalCount = page.totalCount;
+		        that.dataListLoading = false;
+		    });
+		},
+		searchHandle: function() {
+		    let that = this;
+		
+		    //查询甘特图数据
+		    if (that.dataForm.name == null || that.dataForm.name == '') {
+		        that.$refs['dataForm'].validate(valid => {
+		            if (valid) {
+		                that.$refs['dataForm'].clearValidate();
+		                that.dataForm.name = null;
+		                if (that.pageIndex != 1) {
+		                    that.pageIndex = 1;
+		                }
+		                that.loadDataList();
+		                that.mode = 'gantt';
+		            } else {
+		                return false;
+		            }
+		        });
+		    }
+		},
+		//切换“我的会议”和“全部会议”时候触发事件的回调函数
+		changeHandle: function(val) {
+		    this.searchHandle();
+		},
+		sizeChangeHandle: function(val) {
+		    this.pageSize = val;
+		    this.pageIndex = 1;
+		    this.loadDataList();
+		},
+		currentChangeHandle: function(val) {
+		    this.pageIndex = val;
+		    this.loadDataList();
+		},
 		backHandle: function() {
 			let that = this;
 			that.mode = 'gantt';
