@@ -1,9 +1,16 @@
 package com.makiyo.eps.api.service;
 
+import com.makiyo.eps.api.utils.PageUtils;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public interface RoleService {
     public ArrayList<HashMap> searchAllRole();
+
     public HashMap searchById(int id);
+
+    public PageUtils searchRoleByPage(HashMap param);
+
+
 }
