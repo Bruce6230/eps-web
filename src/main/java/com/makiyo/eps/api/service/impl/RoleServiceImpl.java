@@ -1,6 +1,7 @@
 package com.makiyo.eps.api.service.impl;
 
 import com.makiyo.eps.api.dao.TbRoleDao;
+import com.makiyo.eps.api.exception.EpsException;
 import com.makiyo.eps.api.pojo.TbRole;
 import com.makiyo.eps.api.service.RoleService;
 import com.makiyo.eps.api.utils.PageUtils;
@@ -40,6 +41,27 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public int insert(TbRole role) {
         int rows = roleDao.insert(role);
+        return rows;
+    }
+
+    @Override
+    public ArrayList<Integer> searchUserIdByRoleId(int roleId) {
+        ArrayList<Integer> list = roleDao.searchUserIdByRoleId(roleId);
+        return list;
+    }
+
+    @Override
+    public int update(TbRole role) {
+        int rows = roleDao.update(role);
+        return rows;
+    }
+
+    @Override
+    public int deleteRoleByIds(Integer[] ids) {
+        if (!roleDao.searchCanDelete(ids)) {
+            throw new EpsException("无法删除关联用户的角色");
+        }
+        int rows = roleDao.deleteRoleByIds(ids);
         return rows;
     }
 }

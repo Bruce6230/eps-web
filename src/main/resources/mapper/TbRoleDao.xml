@@ -54,4 +54,37 @@
             ,`desc`=#{desc}
         </if>
     </insert>
+    <select id="searchUserIdByRoleId" parameterType="int" resultType="int">
+        SELECT u.id
+        FROM tb_role r
+                 JOIN tb_user u ON JSON_CONTAINS ( u.role, CONVERT ( r.id, CHAR ) )
+        WHERE r.id=#{id}
+    </select>
+    <update id="update" parameterType="com.makiyo.eps.api.pojo.TbRole">
+        UPDATE tb_role
+        SET role_name=#{roleName},
+            `desc`=#{desc},
+            permissions=#{permissions}
+        WHERE id=#{id} AND id!=0
+    </update>
+    <select id="searchCanDelete" resultType="boolean">
+        SELECT IF( SUM( temp.users ) > 0, FALSE, TRUE ) AS result FROM (
+        SELECT COUNT( u.id ) AS users
+        FROM tb_role r
+        JOIN tb_user u ON JSON_CONTAINS ( u.role, CONVERT ( r.id, CHAR ) )
+        WHERE r.id IN
+        <foreach collection="array" open="(" separator="," close=")" item="one">
+            #{one}
+        </foreach>
+        GROUP BY r.id
+        ) temp
+    </select>
+    <delete id="deleteRoleByIds">
+        DELETE FROM tb_role
+        WHERE id IN
+        <foreach collection="array" open="(" separator="," close=")" item="one">
+            #{one}
+        </foreach>
+        AND systemic=FALSE
+    </delete>
 </mapper>

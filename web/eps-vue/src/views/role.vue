@@ -181,6 +181,12 @@ export default {
 		        this.$refs.addOrUpdate.init();
 		    });
 		},
+		updateHandle: function(id, systemic) {
+		    this.addOrUpdateVisible = true;
+		    this.$nextTick(() => {
+		        this.$refs.addOrUpdate.init(id, systemic);
+		    });
+		},
     },
 	created: function() {
 	    this.loadDataList();

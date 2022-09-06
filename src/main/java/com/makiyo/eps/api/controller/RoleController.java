@@ -2,10 +2,9 @@ package com.makiyo.eps.api.controller;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaMode;
+import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.json.JSONUtil;
-import com.makiyo.eps.api.controller.form.InsertRoleForm;
-import com.makiyo.eps.api.controller.form.SearchRoleByIdForm;
-import com.makiyo.eps.api.controller.form.SearchRoleByPageForm;
+import com.makiyo.eps.api.controller.form.*;
 import com.makiyo.eps.api.pojo.TbRole;
 import com.makiyo.eps.api.service.RoleService;
 import com.makiyo.eps.api.utils.PageUtils;
@@ -63,6 +62,35 @@ public class RoleController {
         role.setPermissions(JSONUtil.parseArray(form.getPermissions()).toString());
         role.setDesc(form.getDesc());
         int rows = roleService.insert(role);
+        return Response.ok().put("rows", rows);
+    }
+
+    @PostMapping("/update")
+    @Operation(summary = "更新角色")
+    @SaCheckPermission(value = {"ROOT", "ROLE:UPDATE"}, mode = SaMode.OR)
+    public Response update(@Valid @RequestBody UpdateRoleForm form) {
+        TbRole role = new TbRole();
+        role.setId(form.getId());
+        role.setRoleName(form.getRoleName());
+        role.setPermissions(JSONUtil.parseArray(form.getPermissions()).toString());
+        role.setDesc(form.getDesc());
+        int rows = roleService.update(role);
+        //如果用户修改成功，并且用户修改了该角色的关联权限
+        if (rows == 1 && form.getChanged()) {
+            //把该角色关联的用户踢下线
+            ArrayList<Integer> list = roleService.searchUserIdByRoleId(form.getId());
+            list.forEach(userId -> {
+                StpUtil.logoutByLoginId(userId);
+            });
+        }
+        return Response.ok().put("rows", rows);
+    }
+
+    @PostMapping("/deleteRoleByIds")
+    @Operation(summary = "删除角色记录")
+    @SaCheckPermission(value = {"ROOT", "ROLE:DELETE"}, mode = SaMode.OR)
+    public Response deleteRoleByIds(@Valid @RequestBody DeleteRoleByIdsForm form) {
+        int rows = roleService.deleteRoleByIds(form.getIds());
         return Response.ok().put("rows", rows);
     }
 }

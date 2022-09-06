@@ -14,4 +14,10 @@ public interface RoleService {
     public PageUtils searchRoleByPage(HashMap param);
 
     public int insert(TbRole role);
+
+    public ArrayList<Integer> searchUserIdByRoleId(int roleId);
+
+    public int update(TbRole role);
+
+    public int deleteRoleByIds(Integer[] ids);
 }
