@@ -4,10 +4,11 @@ import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaMode;
 import cn.hutool.json.JSONUtil;
-import com.makiyo.eps.api.utils.Response;
-import com.makiyo.eps.api.controller.form.SearchFreeMeetingRoomForm;
-import com.makiyo.eps.api.controller.form.SearchMeetingRoomByIdForm;
+import com.makiyo.eps.api.controller.form.*;
+import com.makiyo.eps.api.pojo.TbMeetingRoom;
 import com.makiyo.eps.api.service.MeetingRoomService;
+import com.makiyo.eps.api.utils.PageUtils;
+import com.makiyo.eps.api.utils.Response;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,5 +48,36 @@ public class MeetingRoomController {
         HashMap param = JSONUtil.parse(form).toBean(HashMap.class);
         ArrayList<String> list = meetingRoomService.searchFreeMeetingRoom(param);
         return Response.ok().put("list", list);
+    }
+
+    @PostMapping("/searchMeetingRoomByPage")
+    @Operation(summary = "查询会议室分页数据")
+    @SaCheckLogin
+    public Response searchMeetingRoomByPage(@Valid @RequestBody SearchMeetingRoomByPageForm form) {
+        int page = form.getPage();
+        int length = form.getLength();
+        int start = (page - 1) * length;
+        HashMap param = JSONUtil.parse(form).toBean(HashMap.class);
+        param.put("start", start);
+        PageUtils pageUtils = meetingRoomService.searchMeetingRoomByPage(param);
+        return Response.ok().put("page", pageUtils);
+    }
+
+    @PostMapping("/insert")
+    @Operation(summary = "添加会议室")
+    @SaCheckPermission(value = {"ROOT", "MEETING_ROOM:INSERT"}, mode = SaMode.OR)
+    public Response insert(@Valid @RequestBody InsertMeetingRoomForm form) {
+        TbMeetingRoom meetingRoom = JSONUtil.parse(form).toBean(TbMeetingRoom.class);
+        int rows = meetingRoomService.insert(meetingRoom);
+        return Response.ok().put("rows", rows);
+    }
+
+    @PostMapping("/update")
+    @Operation(summary = "修改会议室")
+    @SaCheckPermission(value = {"ROOT", "MEETING_ROOM:UPDATE"}, mode = SaMode.OR)
+    public Response update(@Valid @RequestBody UpdateMeetingRoomForm form) {
+        TbMeetingRoom meetingRoom = JSONUtil.parse(form).toBean(TbMeetingRoom.class);
+        int rows = meetingRoomService.update(meetingRoom);
+        return Response.ok().put("rows", rows);
     }
 }

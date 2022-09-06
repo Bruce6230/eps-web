@@ -126,21 +126,37 @@ export default {
         };
     },
     methods: {
-		loadDataList: function() {
-		    let that = this;
-		    that.dataListLoading = true;
-		    let data = {
-		        roleName: that.dataForm.roleName,
-		        page: that.pageIndex,
-		        length: that.pageSize
-		    };
-		    that.$http('role/searchRoleByPage', 'POST', data, true, function(resp) {
-		        let page = resp.page;
-		        that.dataList = page.list;
-		        that.totalCount = page.totalCount;
-		        that.dataListLoading = false;
-		    });
-		},
+        loadDataList: function() {
+            let that = this;
+            that.dataListLoading = true;
+            let data = {
+                roleName: that.dataForm.roleName,
+                page: that.pageIndex,
+                length: that.pageSize
+            };
+            that.$http('role/searchRoleByPage', 'POST', data, true, function(resp) {
+                let page = resp.page;
+                that.dataList = page.list;
+                that.totalCount = page.totalCount;
+                that.dataListLoading = false;
+            });
+        },
+        searchHandle: function() {
+            this.$refs['dataForm'].validate(valid => {
+                if (valid) {
+                    this.$refs['dataForm'].clearValidate();
+                    if (this.dataForm.roleName == '') {
+                        this.dataForm.roleName = null;
+                    }
+                    if (this.pageIndex != 1) {
+                        this.pageIndex = 1;
+                    }
+                    this.loadDataList();
+                } else {
+                    return false;
+                }
+            });
+        },
         selectionChangeHandle: function(val) {
             this.dataListSelections = val;
         },
@@ -150,47 +166,70 @@ export default {
             }
             return true;
         },
-		sizeChangeHandle: function(val) {
-		    this.pageSize = val;
-		    this.pageIndex = 1;
-		    this.loadDataList();
-		},
-		currentChangeHandle: function(val) {
-		    this.pageIndex = val;
-		    this.loadDataList();
-		},
-		searchHandle: function() {
-		    this.$refs['dataForm'].validate(valid => {
-		        if (valid) {
-		            this.$refs['dataForm'].clearValidate();
-		            if (this.dataForm.roleName == '') {
-		                this.dataForm.roleName = null;
-		            }
-		            if (this.pageIndex != 1) {
-		                this.pageIndex = 1;
-		            }
-		            this.loadDataList();
-		        } else {
-		            return false;
-		        }
-		    });
-		},
-		addHandle: function() {
-		    this.addOrUpdateVisible = true;
-		    this.$nextTick(() => {
-		        this.$refs.addOrUpdate.init();
-		    });
-		},
-		updateHandle: function(id, systemic) {
-		    this.addOrUpdateVisible = true;
-		    this.$nextTick(() => {
-		        this.$refs.addOrUpdate.init(id, systemic);
-		    });
-		},
+        sizeChangeHandle: function(val) {
+            this.pageSize = val;
+            this.pageIndex = 1;
+            this.loadDataList();
+        },
+        // 当前页
+        currentChangeHandle: function(val) {
+            this.pageIndex = val;
+            this.loadDataList();
+        },
+        deleteHandle: function(id) {
+            let that = this;
+            let ids = id
+                ? [id]
+                : that.dataListSelections.map(item => {
+                      return item.id;
+                  });
+            if (ids.length == 0) {
+                that.$message({
+                    message: '没有选中记录',
+                    type: 'warning',
+                    duration: 1200
+                });
+            } else {
+                that.$confirm(`确定要删除选中的记录？`, '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    that.$http('role/deleteRoleByIds', 'POST', { ids: ids }, true, function(resp) {
+                        if (resp.rows > 0) {
+                            that.$message({
+                                message: '操作成功',
+                                type: 'success',
+                                duration: 1200
+                            });
+                            that.loadDataList();
+                        } else {
+                            that.$message({
+                                message: '未能删除记录',
+                                type: 'warning',
+                                duration: 1200
+                            });
+                        }
+                    });
+                });
+            }
+        },
+        addHandle: function() {
+            this.addOrUpdateVisible = true;
+            this.$nextTick(() => {
+                this.$refs.addOrUpdate.init();
+            });
+        },
+        updateHandle: function(id, systemic) {
+            this.addOrUpdateVisible = true;
+            this.$nextTick(() => {
+                this.$refs.addOrUpdate.init(id, systemic);
+            });
+        }
     },
-	created: function() {
-	    this.loadDataList();
-	}
+    created: function() {
+        this.loadDataList();
+    }
 };
 </script>
 

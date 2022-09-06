@@ -93,4 +93,5 @@ public class RoleController {
         int rows = roleService.deleteRoleByIds(form.getIds());
         return Response.ok().put("rows", rows);
     }
+
 }
