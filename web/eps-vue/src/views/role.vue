@@ -126,6 +126,21 @@ export default {
         };
     },
     methods: {
+		loadDataList: function() {
+		    let that = this;
+		    that.dataListLoading = true;
+		    let data = {
+		        roleName: that.dataForm.roleName,
+		        page: that.pageIndex,
+		        length: that.pageSize
+		    };
+		    that.$http('role/searchRoleByPage', 'POST', data, true, function(resp) {
+		        let page = resp.page;
+		        that.dataList = page.list;
+		        that.totalCount = page.totalCount;
+		        that.dataListLoading = false;
+		    });
+		},
         selectionChangeHandle: function(val) {
             this.dataListSelections = val;
         },
@@ -135,9 +150,41 @@ export default {
             }
             return true;
         },
-        
-        
-    }
+		sizeChangeHandle: function(val) {
+		    this.pageSize = val;
+		    this.pageIndex = 1;
+		    this.loadDataList();
+		},
+		currentChangeHandle: function(val) {
+		    this.pageIndex = val;
+		    this.loadDataList();
+		},
+		searchHandle: function() {
+		    this.$refs['dataForm'].validate(valid => {
+		        if (valid) {
+		            this.$refs['dataForm'].clearValidate();
+		            if (this.dataForm.roleName == '') {
+		                this.dataForm.roleName = null;
+		            }
+		            if (this.pageIndex != 1) {
+		                this.pageIndex = 1;
+		            }
+		            this.loadDataList();
+		        } else {
+		            return false;
+		        }
+		    });
+		},
+		addHandle: function() {
+		    this.addOrUpdateVisible = true;
+		    this.$nextTick(() => {
+		        this.$refs.addOrUpdate.init();
+		    });
+		},
+    },
+	created: function() {
+	    this.loadDataList();
+	}
 };
 </script>
 

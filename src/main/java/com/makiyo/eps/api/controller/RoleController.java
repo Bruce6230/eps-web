@@ -3,8 +3,10 @@ package com.makiyo.eps.api.controller;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaMode;
 import cn.hutool.json.JSONUtil;
+import com.makiyo.eps.api.controller.form.InsertRoleForm;
 import com.makiyo.eps.api.controller.form.SearchRoleByIdForm;
 import com.makiyo.eps.api.controller.form.SearchRoleByPageForm;
+import com.makiyo.eps.api.pojo.TbRole;
 import com.makiyo.eps.api.service.RoleService;
 import com.makiyo.eps.api.utils.PageUtils;
 import com.makiyo.eps.api.utils.Response;
@@ -50,5 +52,17 @@ public class RoleController {
         param.put("start", start);
         PageUtils pageUtils = roleService.searchRoleByPage(param);
         return Response.ok().put("page", pageUtils);
+    }
+
+    @PostMapping("/insert")
+    @Operation(summary = "添加角色")
+    @SaCheckPermission(value = {"ROOT", "ROLE:INSERT"}, mode = SaMode.OR)
+    public Response insert(@Valid @RequestBody InsertRoleForm form) {
+        TbRole role = new TbRole();
+        role.setRoleName(form.getRoleName());
+        role.setPermissions(JSONUtil.parseArray(form.getPermissions()).toString());
+        role.setDesc(form.getDesc());
+        int rows = roleService.insert(role);
+        return Response.ok().put("rows", rows);
     }
 }

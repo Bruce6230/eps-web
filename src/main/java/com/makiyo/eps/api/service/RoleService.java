@@ -1,5 +1,6 @@
 package com.makiyo.eps.api.service;
 
+import com.makiyo.eps.api.pojo.TbRole;
 import com.makiyo.eps.api.utils.PageUtils;
 
 import java.util.ArrayList;
@@ -12,5 +13,5 @@ public interface RoleService {
 
     public PageUtils searchRoleByPage(HashMap param);
 
-
+    public int insert(TbRole role);
 }

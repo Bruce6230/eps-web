@@ -46,4 +46,12 @@
         GROUP BY r.id
         ) AS temp
     </select>
+    <insert id="insert" parameterType="com.makiyo.eps.api.pojo.TbRole">
+        INSERT INTO tb_role
+        SET role_name=#{roleName},
+        permissions=#{permissions}
+        <if test="desc!=null">
+            ,`desc`=#{desc}
+        </if>
+    </insert>
 </mapper>

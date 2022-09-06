@@ -1,5 +1,6 @@
 package com.makiyo.eps.api.dao;
 
+import com.makiyo.eps.api.pojo.TbRole;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.ArrayList;
@@ -15,4 +16,6 @@ public interface TbRoleDao {
     public ArrayList<HashMap> searchRoleByPage(HashMap param);
 
     public long searchRoleCount(HashMap param);
+
+    public int insert(TbRole role);
 }
