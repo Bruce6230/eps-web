@@ -21,4 +21,8 @@ public interface TbMeetingRoomDao {
     public int insert(TbMeetingRoom meetingRoom);
 
     public int update(TbMeetingRoom meetingRoom);
+
+    public boolean searchCanDelete(Integer[] ids);
+
+    public int deleteMeetingRoomByIds(Integer[] ids);
 }

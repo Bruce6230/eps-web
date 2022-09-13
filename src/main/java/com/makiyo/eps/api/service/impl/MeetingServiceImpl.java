@@ -6,6 +6,7 @@ import com.makiyo.eps.api.service.MeetingService;
 import com.makiyo.eps.api.utils.PageUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -14,6 +15,9 @@ import java.util.HashMap;
 @Service
 @Slf4j
 public class MeetingServiceImpl implements MeetingService {
+    @Autowired
+    private RedisTemplate redisTemplate;
+
     @Autowired
     private TbMeetingDao meetingDao;
 
@@ -33,5 +37,15 @@ public class MeetingServiceImpl implements MeetingService {
         }
         PageUtils pageUtils = new PageUtils(list, count, start, length);
         return pageUtils;
+    }
+
+    @Override
+    public Long searchRoomIdByUUID(String uuid) {
+        if (redisTemplate.hasKey(uuid)) {
+            Object temp = redisTemplate.opsForValue().get(uuid);
+            long roomId = Long.parseLong(temp.toString());
+            return roomId;
+        }
+        return null;
     }
 }

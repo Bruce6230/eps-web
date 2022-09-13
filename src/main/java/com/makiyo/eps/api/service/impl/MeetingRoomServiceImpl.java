@@ -1,6 +1,7 @@
 package com.makiyo.eps.api.service.impl;
 
 import com.makiyo.eps.api.dao.TbMeetingRoomDao;
+import com.makiyo.eps.api.exception.EpsException;
 import com.makiyo.eps.api.pojo.TbMeetingRoom;
 import com.makiyo.eps.api.service.MeetingRoomService;
 import com.makiyo.eps.api.utils.PageUtils;
@@ -52,6 +53,15 @@ public class MeetingRoomServiceImpl implements MeetingRoomService {
     @Override
     public int update(TbMeetingRoom meetingRoom) {
         int rows = meetingRoomDao.update(meetingRoom);
+        return rows;
+    }
+
+    @Override
+    public int deleteMeetingRoomByIds(Integer[] ids) {
+        if (!meetingRoomDao.searchCanDelete(ids)) {
+            throw new EpsException("无法删除关联会议的会议室");
+        }
+        int rows = meetingRoomDao.deleteMeetingRoomByIds(ids);
         return rows;
     }
 }

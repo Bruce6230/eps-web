@@ -80,4 +80,12 @@ public class MeetingRoomController {
         int rows = meetingRoomService.update(meetingRoom);
         return Response.ok().put("rows", rows);
     }
+
+    @PostMapping("/deleteMeetingRoomByIds")
+    @Operation(summary = "删除会议室记录")
+    @SaCheckPermission(value = {"ROOT", "MEETING_ROOM:DELETE"}, mode = SaMode.OR)
+    public Response deleteMeetingRoomByIds(@Valid @RequestBody DeleteMeetingRoomByIdsForm form) {
+        int rows = meetingRoomService.deleteMeetingRoomByIds(form.getIds());
+        return Response.ok().put("rows", rows);
+    }
 }

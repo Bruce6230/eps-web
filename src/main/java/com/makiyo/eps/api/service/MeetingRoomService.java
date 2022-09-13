@@ -18,4 +18,6 @@ public interface MeetingRoomService {
     public int insert(TbMeetingRoom meetingRoom);
 
     public int update(TbMeetingRoom meetingRoom);
+
+    public int deleteMeetingRoomByIds(Integer[] ids);
 }
