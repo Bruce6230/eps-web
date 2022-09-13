@@ -90,8 +90,8 @@ tencent:
     region: 存储桶的区域
     bucket: 存储桶的名字
   trtc:
-    appid: 1400726261
-    key: 5f4361c517fd085ef94681dd8cbb05e226129165902bec6cf7ae30d7bfd72b29
+    appId: 1400726261
+    secretKey: 5f4361c517fd085ef94681dd8cbb05e226129165902bec6cf7ae30d7bfd72b29
     expire: 86400
 wx:
   app-id: wx790a007e30c8a49c
