@@ -33,14 +33,6 @@ public class MeetingRoomController {
         return Response.ok().put("list", list);
     }
 
-    @PostMapping("/searchById")
-    @Operation(summary = "根据ID查找会议室")
-    @SaCheckPermission(value = {"ROOT", "MEETING_ROOM:SELECT"}, mode = SaMode.OR)
-    public Response searchById(@Valid @RequestBody SearchMeetingRoomByIdForm form) {
-        HashMap map = meetingRoomService.searchById(form.getId());
-        return Response.ok(map);
-    }
-
     @PostMapping("/searchFreeMeetingRoom")
     @Operation(summary = "查询空闲会议室")
     @SaCheckLogin
@@ -70,6 +62,14 @@ public class MeetingRoomController {
         TbMeetingRoom meetingRoom = JSONUtil.parse(form).toBean(TbMeetingRoom.class);
         int rows = meetingRoomService.insert(meetingRoom);
         return Response.ok().put("rows", rows);
+    }
+
+    @PostMapping("/searchById")
+    @Operation(summary = "根据ID查找会议室")
+    @SaCheckPermission(value = {"ROOT", "MEETING_ROOM:SELECT"}, mode = SaMode.OR)
+    public Response searchById(@Valid @RequestBody SearchMeetingRoomByIdForm form) {
+        HashMap map = meetingRoomService.searchById(form.getId());
+        return Response.ok(map);
     }
 
     @PostMapping("/update")

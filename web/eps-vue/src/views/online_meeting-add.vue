@@ -34,9 +34,9 @@
                         <el-time-select
                             placeholder="起始时间"
                             v-model="dataForm.start"
-                            start="08:30"
+                            start="00:00"
                             step="00:30"
-                            end="18:30"
+                            end="24:00"
                             size="medium"
                             style="width:96%"
                             clearable="clearable"
@@ -49,9 +49,9 @@
                         <el-time-select
                             placeholder="结束时间"
                             v-model="dataForm.end"
-                            start="08:30"
+                            start="00:00"
                             step="00:30"
-                            end="18:30"
+                            end="24:00"
                             size="medium"
                             style="width:96%"
                             clearable="clearable"
