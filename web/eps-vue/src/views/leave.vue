@@ -75,12 +75,41 @@
 					<span>{{ (pageIndex - 1) * pageSize + scope.$index + 1 }}</span>
 				</template>
 			</el-table-column>
-			<el-table-column prop="name" header-align="center" align="center" label="姓名" min-width="150" ></el-table-column>
-			<el-table-column prop="deptName" header-align="center" align="center" label="部门" min-width="150"></el-table-column>
-			<el-table-column prop="start" header-align="center" align="center" label="起始" min-width="180"></el-table-column>
-			<el-table-column prop="end" header-align="center" align="center" label="截止" min-width="180"></el-table-column>
-			<el-table-column prop="type" header-align="center" align="center" label="请假类型" min-width="150"></el-table-column>
-
+			<el-table-column
+				prop="name"
+				header-align="center"
+				align="center"
+				label="姓名"
+				min-width="150"
+			></el-table-column>
+			<el-table-column
+				prop="deptName"
+				header-align="center"
+				align="center"
+				label="部门"
+				min-width="150"
+			></el-table-column>
+			<el-table-column
+				prop="start"
+				header-align="center"
+				align="center"
+				label="起始"
+				min-width="180"
+			></el-table-column>
+			<el-table-column
+				prop="end"
+				header-align="center"
+				align="center"
+				label="截止"
+				min-width="180"
+			></el-table-column>
+			<el-table-column
+				prop="type"
+				header-align="center"
+				align="center"
+				label="请假类型"
+				min-width="150"
+			></el-table-column>
 			<el-table-column prop="status" header-align="center" align="center" label="请假状态" min-width="120">
 				<template #default="scope">
 					<span v-if="scope.row.status == '请假中'" style="color: orange;">{{ scope.row.status }}</span>
@@ -163,9 +192,111 @@ export default {
 				that.deptList = resp.list;
 			});
 		},
+		loadDataList: function() {
+			let that = this;
+			that.dataListLoading = true;
+			let data = {
+				name: that.dataForm.name,
+				deptId: that.dataForm.deptId,
+				date: that.dataForm.date,
+				type: that.dataForm.type,
+				status: that.dataForm.status,
+				page: that.pageIndex,
+				length: that.pageSize
+			};
+			if (that.dataForm.date != null && that.dataForm.date != '') {
+				data.date = dayjs(that.dataForm.date).format('YYYY-MM-DD');
+			}
+			that.$http('leave/searchLeaveByPage', 'POST', data, true, function(resp) {
+				let page = resp.page;
+				for (let one of page.list) {
+					if (one.type == 1) {
+						one.type = '病假';
+					} else if (one.type == 2) {
+						one.type = '事假';
+					}
+					if (one.status == 1) {
+						one.status = '请假中';
+					} else if (one.status == 2) {
+						one.status = '不同意';
+					} else if (one.status == 3) {
+						one.status = '已同意';
+					}
+				}
+				that.dataList = page.list;
+				that.totalCount = page.totalCount;
+				that.dataListLoading = false;
+			});
+		},
+		sizeChangeHandle: function(val) {
+			this.pageSize = val;
+			this.pageIndex = 1;
+			this.loadDataList();
+		},
+		currentChangeHandle: function(val) {
+			this.pageIndex = val;
+			this.loadDataList();
+		},
+		searchHandle: function() {
+			this.$refs['dataForm'].validate(valid => {
+				if (valid) {
+					this.$refs['dataForm'].clearValidate();
+					if (this.dataForm.name == '') {
+						this.dataForm.name = null;
+					}
+					if (this.pageIndex != 1) {
+						this.pageIndex = 1;
+					}
+					this.loadDataList();
+				} else {
+					return false;
+				}
+			});
+		},
+		addHandle: function() {
+			this.addVisible = true;
+			this.$nextTick(() => {
+				this.$refs.add.init();
+			});
+		},
+		deleteHandle: function(id) {
+			let that = this;
+			that.$confirm(`确定要删除选中的记录？`, '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning'
+			}).then(() => {
+				let data = {
+					id: id
+				};
+				that.$http('leave/deleteLeaveById', 'POST', data, true, function(resp) {
+					if (resp.rows > 0) {
+						that.$message({
+							message: '操作成功',
+							type: 'success',
+							duration: 1200
+						});
+						that.loadDataList();
+					} else {
+						that.$message({
+							message: '未能删除记录',
+							type: 'warning',
+							duration: 1200
+						});
+					}
+				});
+			});
+		},
+		pdfHandle:function(id){
+			this.pdfVisible=true
+			this.$nextTick(()=>{
+				this.$refs.pdf.init(id)
+			})
+		}
 	},
 	created: function() {
 		this.loadDeptList();
+		this.loadDataList();
 	}
 };
 </script>

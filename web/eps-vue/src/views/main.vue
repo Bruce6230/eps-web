@@ -9,7 +9,7 @@
 			<div class="site-navbar__header">
 				<h1 class="site-navbar__brand">
 					<a class="site-navbar__brand-lg">Eps在线办公系统</a>
-					<a class="site-navbar__brand-mini">OA</a>
+					<a class="site-navbar__brand-mini">Eps</a>
 				</h1>
 			</div>
 			<div class="site-navbar__body clearfix">
@@ -29,7 +29,7 @@
 					<el-menu-item class="site-navbar__avatar" index="3">
 						<el-dropdown>
 							<span class="el-dropdown-link">
-								<img :src="photo" />
+								<img src="../assets/login/user.jpg"/>
 								{{ name }}
 							</span>
 							<template #dropdown>
@@ -58,6 +58,29 @@
 						<SvgIcon name="home" class="icon-svg" />
 						<span slot="title">首页</span>
 					</el-menu-item>
+					<el-submenu
+						index="区域布控"
+						:popper-class="'site-sidebar--' + sidebarLayoutSkin + '-popper'"
+					>
+						<template #title>
+							<SvgIcon name="area_fill" class="icon-svg" />
+							<span slot="title">区域布控</span>
+						</template>
+						<el-menu-item
+							index="control"
+							@click="$router.push({ name: 'Control' })"
+						>
+							<SvgIcon name="area_fill" class="icon-svg" />
+							<span slot="title">布控预警</span>
+						</el-menu-item>
+						<el-menu-item
+							index="fire"
+							@click="$router.push({ name: 'Fire'})"
+						>
+							<SvgIcon name="fire_fill" class="icon-svg"/>
+							<span slot="title">火灾检测</span>
+						</el-menu-item>
+					</el-submenu>
 					<el-submenu
 						index="组织管理"
 						:popper-class="'site-sidebar--' + sidebarLayoutSkin + '-popper'"
@@ -224,173 +247,168 @@ import { isURL } from '../utils/validate';
 import UpdatePassword from './update-password.vue';
 import { ref, provide } from 'vue';
 export default {
-	components: { SvgIcon, UpdatePassword },
-	data: function() {
-		return {
-			navbarLayoutType: '',
-			sidebarFold: false,
-			sidebarLayoutSkin: 'dark',
-			name: '',
-			photo: '',
-			documentClientHeight: 0,
-			siteContentViewHeight: {},
-			height: null,
-			mainTabs: [],
-			mainTabsActiveName: '',
-			menuActiveName: '',
-			updatePasswordVisible: false
-		};
-	},
-	created() {
-		let that = this;
-		that.routeHandle(that.$route);
-		// that.$options.sockets.onopen = function(resp) {
-		// 	//发送心跳检测，避免超时后服务端切断连接
-		// 	setInterval(function() {
-		// 		that.$socket.sendObj({ opt: 'ping' });
-		// 	}, 60 * 1000);
-		// };
-	},
-	watch: {
-		$route: {
-			handler(to, from) {
-				if (to.path != from.path) {
-					// this.$router.push(to);
-					this.routeHandle(to);
-				}
-			}
-		}
-	},
-	methods: {
-		handleSwitch: function() {
-			if (this.sidebarFold) {
-				this.navbarLayoutType = '';
-			} else {
-				this.navbarLayoutType = 'fold';
-			}
-			this.sidebarFold = !this.sidebarFold;
-		},
-		updatePasswordHandle:function(){
-			this.updatePasswordVisible = true;
-			this.$nextTick(() => {
-				this.$refs.updatePassword.init();
-			});
-		},
-		resetDocumentClientHeight: function() {
-			this.documentClientHeight = document.documentElement['clientHeight'];
-			window.onresize = () => {
-				this.documentClientHeight = document.documentElement['clientHeight'];
-				this.loadSiteContentViewHeight();
-			};
-		},
-		logout:function(){
-			let that = this
-			that.$http("user/logout","GET",null,true,function(response){
-				localStorage.removeItem('permissions');
-				that.$route.push({name:"Login"})
-			})
-		},
-		loadSiteContentViewHeight: function() {
-			let height = this.documentClientHeight - 50 - 30 - 2;
-			if (this.$route.meta.isTab) {
-				height -= 40;
-				this.siteContentViewHeight = isURL(this.$route.meta.iframeUrl)
-					? { height: height + 'px' }
-					: { minHeight: height + 'px' };
-				this.height=provide('height',{ height: height-40 + 'px' })
-			}
-			this.siteContentViewHeight = { minHeight: height + 'px'};
-			
-		},
-		routeHandle: function(route) {
-			//每次切换页面，重新计算页面高度和内容区高度
-			this.resetDocumentClientHeight();
-			this.loadSiteContentViewHeight();
+    components: { SvgIcon, UpdatePassword },
+    data: function() {
+        return {
+            navbarLayoutType: '',
+            sidebarFold: false,
+            sidebarLayoutSkin: 'dark',
+            name: '',
+            photo: '',
+            documentClientHeight: 0,
+            siteContentViewHeight: {},
+            height: null,
+            mainTabs: [],
+            mainTabsActiveName: '',
+            menuActiveName: '',
+            updatePasswordVisible: false
+        };
+    },
+    created() {
+        let that = this;
+        that.routeHandle(that.$route);
+        // that.$options.sockets.onopen = function(resp) {
+        //     //发送心跳检测，避免超时后服务端切断连接
+        //     setInterval(function() {
+        //         that.$socket.sendObj({ opt: 'ping' });
+        //     }, 60 * 1000);
+        // };
+    },
+    watch: {
+        $route: {
+            handler(to, from) {
+                if (to.path != from.path) {
+                    // this.$router.push(to);
+                    this.routeHandle(to);
+                }
+            }
+        }
+    },
+    methods: {
+        handleSwitch: function() {
+            if (this.sidebarFold) {
+                this.navbarLayoutType = '';
+            } else {
+                this.navbarLayoutType = 'fold';
+            }
+            this.sidebarFold = !this.sidebarFold;
+        },
+        resetDocumentClientHeight: function() {
+            this.documentClientHeight = document.documentElement['clientHeight'];
+            window.onresize = () => {
+                this.documentClientHeight = document.documentElement['clientHeight'];
+                this.loadSiteContentViewHeight();
+            };
+        },
+        loadSiteContentViewHeight: function() {
+            let height = this.documentClientHeight - 50 - 30 - 2;
+            if (this.$route.meta.isTab) {
+                height -= 40;
+                this.siteContentViewHeight = isURL(this.$route.meta.iframeUrl)
+                    ? { height: height + 'px' }
+                    : { minHeight: height + 'px' };
+                this.height = provide('height', { height: height - 40 + 'px' });
+            }
+            this.siteContentViewHeight = { minHeight: height + 'px' };
+        },
+        routeHandle: function(route) {
+            //每次切换页面，重新计算页面高度和内容区高度
+            this.resetDocumentClientHeight();
+            this.loadSiteContentViewHeight();
 
-			if (route.meta.isTab) {
-				// tab选中, 不存在先添加
-				var tab = this.mainTabs.filter(item => item.name === route.name)[0];
-				if (!tab) {
-					if (route.meta.isDynamic) {
-						route = this.dynamicMenuRoutes.filter(item => item.name === route.name)[0];
+            if (route.meta.isTab) {
+                // tab选中, 不存在先添加
+                var tab = this.mainTabs.filter(item => item.name === route.name)[0];
+                if (!tab) {
+                    if (route.meta.isDynamic) {
+                        route = this.dynamicMenuRoutes.filter(item => item.name === route.name)[0];
 
-						if (!route) {
-							return console.error('未能找到可用标签页!');
-						}
-					}
-					tab = {
-						menuId: route.meta.menuId || route.name,
-						name: route.name,
-						title: route.meta.title,
-						type: isURL(route.meta.iframeUrl) ? 'iframe' : 'module',
-						iframeUrl: route.meta.iframeUrl || '',
-						params: route.params,
-						query: route.query
-					};
-					this.mainTabs = this.mainTabs.concat(tab);
-				}
-				this.menuActiveName = tab.menuId + '';
-				this.mainTabsActiveName = tab.name;
-			}
-		},
+                        if (!route) {
+                            return console.error('未能找到可用标签页!');
+                        }
+                    }
+                    tab = {
+                        menuId: route.meta.menuId || route.name,
+                        name: route.name,
+                        title: route.meta.title,
+                        type: isURL(route.meta.iframeUrl) ? 'iframe' : 'module',
+                        iframeUrl: route.meta.iframeUrl || '',
+                        params: route.params,
+                        query: route.query
+                    };
+                    this.mainTabs = this.mainTabs.concat(tab);
+                }
+                this.menuActiveName = tab.menuId + '';
+                this.mainTabsActiveName = tab.name;
+            }
+        },
+        logout: function() {
+            let that = this;
+            that.$http('user/logout', 'GET', null, true, function(resp) {
+                localStorage.removeItem('permissions');
+                that.$router.push({ name: 'Login' });
+            });
+        },
+        updatePasswordHandle: function() {
+            this.updatePassowrdVisible = true;
+            this.$nextTick(() => {
+                this.$refs.updatePassword.init();
+            });
+        },
+        selectedTabHandle: function(tab, e) {
+            tab = this.mainTabs.filter(item => item.name === tab.paneName);
+            if (tab.length >= 1) {
+                this.$router.push({
+                    name: tab[0].name,
+                    query: tab[0].query,
+                    params: tab[0].params
+                });
+            }
+        },
+        removeTabHandle: function(tabName) {
+            this.mainTabs = this.mainTabs.filter(item => item.name !== tabName);
+            if (this.mainTabs.length >= 1) {
+                // 当前选中tab被删除
+                if (tabName === this.mainTabsActiveName) {
+                    var tab = this.mainTabs[this.mainTabs.length - 1];
+                    this.$router.push({ name: tab.name, query: tab.query, params: tab.params }, () => {
+                        this.mainTabsActiveName = this.$route.name;
+                    });
+                }
+            } else {
+                this.menuActiveName = '';
+                this.$router.push({ name: 'Home' });
+            }
+        },
+        // tabs, 关闭当前
+        tabsCloseCurrentHandle: function() {
+            this.removeTabHandle(this.mainTabsActiveName);
+        },
+        // tabs, 关闭其它
+        tabsCloseOtherHandle: function() {
+            this.mainTabs = this.mainTabs.filter(item => item.name === this.mainTabsActiveName);
+        },
+        // tabs, 关闭全部
+        tabsCloseAllHandle: function() {
+            this.mainTabs = [];
+            this.menuActiveName = '';
+            this.$router.push({ name: 'Home' });
+        }
+    },
+    mounted: function() {
+        let that = this;
+        //加载用户数据
+        that.$http('user/loadUserInfo', 'GET', null, true, function(resp) {
+            let json = resp;
+            let name = json.name;
+            let photo = json.photo;
+            that.name = name;
+            that.photo = photo;
+        });
 
-		selectedTabHandle: function(tab, e) {
-			tab = this.mainTabs.filter(item => item.name === tab.paneName);
-			if (tab.length >= 1) {
-				this.$router.push({
-					name: tab[0].name,
-					query: tab[0].query,
-					params: tab[0].params
-				});
-			}
-		},
-		removeTabHandle: function(tabName) {
-			this.mainTabs = this.mainTabs.filter(item => item.name !== tabName);
-			if (this.mainTabs.length >= 1) {
-				// 当前选中tab被删除
-				if (tabName === this.mainTabsActiveName) {
-					var tab = this.mainTabs[this.mainTabs.length - 1];
-					this.$router.push(
-						{ name: tab.name, query: tab.query, params: tab.params },
-						() => {
-							this.mainTabsActiveName = this.$route.name;
-						}
-					);
-				}
-			} else {
-				this.menuActiveName = '';
-				this.$router.push({ name: 'Home' });
-			}
-		},
-		// tabs, 关闭当前
-		tabsCloseCurrentHandle: function() {
-			this.removeTabHandle(this.mainTabsActiveName);
-		},
-		// tabs, 关闭其它
-		tabsCloseOtherHandle: function() {
-			this.mainTabs = this.mainTabs.filter(item => item.name === this.mainTabsActiveName);
-		},
-		// tabs, 关闭全部
-		tabsCloseAllHandle: function() {
-			this.mainTabs = [];
-			this.menuActiveName = '';
-			this.$router.push({ name: 'Home' });
-		}
-	},
-	mounted: function() {
-		let that = this;
-		//加载用户数据
-		that.$http('user/loadUserInfo', 'GET', null, true, function(resp) {
-			let json = resp;
-			let name = json.name;
-			let photo = json.photo;
-			that.name = name;
-			that.photo = photo;
-		});
-
-		that.resetDocumentClientHeight();
-		that.loadSiteContentViewHeight();
-	}
+        that.resetDocumentClientHeight();
+        that.loadSiteContentViewHeight();
+    }
 };
 </script>
 

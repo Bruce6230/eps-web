@@ -29,17 +29,20 @@ public class UserServiceImpl implements UserService {
     @Value("${wx.app-secret}")
     private String appSecret;
 
-//    @Value("${workflow.url}")
-//    private String workflow;
-
-//    @Value("${emos.code}")
-//    private String code;
+    @Value("${workflow.url}")
+    private String workflow;
 
     @Autowired
     private RedisTemplate redisTemplate;
 
     @Autowired
     private TbUserDao userDao;
+
+    @Override
+    public HashMap searchNameAndDept(int userId) {
+        HashMap map = userDao.searchNameAndDept(userId);
+        return map;
+    }
 
     @Override
     public HashMap createQrCode() {
@@ -58,10 +61,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean checkQrCode(String code, String uuid) {
+    public boolean checkQrCode(String uuid) {
         boolean bool = redisTemplate.hasKey(uuid);
         if (bool) {
-            String openId = getOpenId(code);
+            String openId = "8e1bcae8c6cd023577136a7e56ccf1df";
             long userId = userDao.searchIdByOpenId(openId);
             redisTemplate.opsForValue().set(uuid, userId);
         }
@@ -147,6 +150,12 @@ public class UserServiceImpl implements UserService {
     public int deleteUserById(Integer[] id) {
         int rows = userDao.deleteUserById(id);
         return rows;
+    }
+
+    @Override
+    public ArrayList<String> searchUserRoles(int userId) {
+        ArrayList<String> list = userDao.searchUserRoles(userId);
+        return list;
     }
 
     private String getOpenId(String code) {

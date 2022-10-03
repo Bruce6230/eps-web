@@ -10,7 +10,7 @@ import java.util.Set;
 public interface UserService {
     public HashMap createQrCode();
 
-    public boolean checkQrCode(String code,String uuid);
+    public boolean checkQrCode(String uuid);
 
     public HashMap wechatLogin(String uuid);
 
@@ -33,4 +33,8 @@ public interface UserService {
     public int update(HashMap param);
 
     public int deleteUserById(Integer[] id);
+
+    public ArrayList<String> searchUserRoles(int userId);
+
+    public HashMap searchNameAndDept(int userId);
 }

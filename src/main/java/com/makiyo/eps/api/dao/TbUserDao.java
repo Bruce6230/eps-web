@@ -38,4 +38,8 @@ public interface TbUserDao {
     public int update(HashMap param);
 
     public int deleteUserById(Integer[] id);
+
+    public ArrayList<String> searchUserRoles(int userId);
+
+    public HashMap searchNameAndDept(int userId);
 }

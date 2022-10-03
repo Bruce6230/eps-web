@@ -35,9 +35,8 @@
 		</div>
 		<template #footer>
 			<span class="dialog-footer">
-				<el-button type="primary" @click="getPdf('#pdfDom')" size="medium">下载请假单</el-button>
+				<el-button type="primary" @click="getPdf()" size="medium">下载请假单</el-button>
 				<el-button size="medium" @click="cancel()">取消</el-button>
-				
 			</span>
 		</template>
 	</el-dialog>
@@ -59,7 +58,33 @@ export default {
 		};
 	},
 	methods: {
-		
+		init:function(id){
+			let that=this
+			that.visible=true
+			that.name = null
+			that.sex = null
+			that.dept = null
+			that.reason = null
+			that.start = null
+			that.end = null
+			that.type = null
+			that.$http("leave/searchLeaveById","POST",{id:id},true,function(resp){
+				that.name = resp.name
+				that.sex = resp.sex
+				that.dept = resp.dept
+				that.reason = resp.reason
+				if (resp.type == 1) {
+					that.type = '病假'
+				} else if (resp.type == 2) {
+					 that.type = '事假'
+				}
+				that.start = resp.start
+				that.end = resp.end
+			})
+		},
+		cancel:function(){
+			this.visible=false
+		}
 	}
 };
 </script>

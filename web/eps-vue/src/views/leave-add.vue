@@ -121,13 +121,44 @@ export default {
 				that.$refs['dataForm'].resetFields();
 			});
 		},
-		
+		dataFormSubmit:function(){
+			let that=this
+			let data={
+				reason:that.dataForm.reason,
+				start: dayjs(that.dataForm.startDate).format('YYYY-MM-DD') + ' ' + that.dataForm.startTime + ':00',
+				end: dayjs(that.dataForm.endDate).format('YYYY-MM-DD') + ' ' + that.dataForm.endTime + ':00',
+				type:that.dataForm.type,
+			}
+			this.$refs['dataForm'].validate(valid => {
+				if (valid) {
+					that.$http("leave/insert","POST",data,true,function(resp){
+						if(resp.rows==1){
+							that.visible=false
+							that.$message({
+								message: '操作成功',
+								type: 'success',
+								duration: 1200,
+							});
+							setTimeout(function(){
+								that.$emit('refreshDataList');
+							},1200)
+						}else{
+							that.$message({
+								message: '操作失败',
+								type: 'error',
+								duration: 1200,
+							});
+						}
+					})
+				}
+			})
+		}
 	}
 };
 </script>
 
 <style lang="less" scoped="scoped">
-.form-item{
+.form-item {
 	margin-bottom: 0 !important;
 }
 </style>

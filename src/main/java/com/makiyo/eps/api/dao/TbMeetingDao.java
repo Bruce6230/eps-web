@@ -1,5 +1,6 @@
 package com.makiyo.eps.api.dao;
 
+import com.makiyo.eps.api.pojo.TbMeeting;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.ArrayList;
@@ -15,4 +16,25 @@ public interface TbMeetingDao {
 
     public long searchOfflineMeetingCount(HashMap param);
 
+    public int updateMeetingInstanceId(HashMap param);
+
+    public int insert(TbMeeting meeting);
+
+    public int deleteMeetingApplication(HashMap param);
+
+    public ArrayList<HashMap> searchOfflineMeetingInWeek(HashMap param);
+
+    public HashMap searchMeetingInfo(long id);
+
+    public HashMap searchCurrentMeetingInfo(long id);
+
+    public ArrayList<HashMap> searchOnlineMeetingByPage(HashMap param);
+
+    public long searchOnlineMeetingCount(HashMap param);
+
+    public ArrayList<HashMap> searchOnlineMeetingMembers(HashMap param);
+
+    public long searchCanCheckinMeeting(HashMap param);
+
+    public int updateMeetingPresent(HashMap param);
 }

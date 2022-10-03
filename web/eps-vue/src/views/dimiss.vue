@@ -46,7 +46,59 @@ export default {
 		};
 	},
 	methods: {
-		
+		init: function(id) {
+			let that = this;
+			that.dataForm.userId = id;
+			that.visible = true;
+			that.$nextTick(() => {
+				that.$refs['dataForm'].resetFields();
+				that.$http('user/searchUserGroupByDept', 'POST', {"userId":id}, true, function(resp) {
+					let list = resp.list;
+					let userList = [];
+					for (let one of list) {
+						let options = [];
+						for (let user of one.users) {
+							options.push({ label: user.name, value: user.userId });
+						}
+						userList.push({
+							label: '[  ' + one.deptName + '  ]',
+							options: options
+						});
+					}
+					that.userList = userList;
+				});
+			});
+			
+		},
+		dataFormSubmit: function() {
+			let that = this;
+			let data = {
+				userId: that.dataForm.userId,
+				assigneeId: that.dataForm.assigneeId
+			};
+			this.$refs['dataForm'].validate(valid => {
+				if (valid) {
+					// console.log(data);
+					that.$http('user/dimiss', 'POST', data, true, function(resp) {
+						if (resp.rows == 1) {
+							that.visible = false;
+							that.$message({
+								message: '操作成功',
+								type: 'success',
+								duration: 1200
+							});
+							that.$emit('refreshDataList');
+						} else {
+							that.$message({
+								message: '操作失败',
+								type: 'error',
+								duration: 1200
+							});
+						}
+					});
+				}
+			});
+		}
 	}
 };
 </script>

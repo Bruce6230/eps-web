@@ -1,7 +1,7 @@
 <template>
 	<el-dialog width="800px" :close-on-click-modal="false" v-model="visible" :show-close="false" center>
 		<div id="pdfDom">
-			<img :src="qrCodeBase64" class="qrCode">
+			<img :src="qrCodeBase64" class="qrCode" />
 			<h2 class="title">费&nbsp;&nbsp;&nbsp;用&nbsp;&nbsp;&nbsp;报&nbsp;&nbsp;&nbsp;销&nbsp;&nbsp;&nbsp;单</h2>
 			<div class="top-info-container">
 				<span class="info">报销部门：{{ dept }}</span>
@@ -17,10 +17,10 @@
 						<th width="16%">金额</th>
 					</tr>
 					<tr align="center" v-for="one in content">
-						<td align="left">{{one.title}}</td>
-						<td align="left">{{one.desc}}</td>
-						<td>{{one.type}}</td>
-						<td align="left">{{one.money!=""?one.money+"元":""}}</td>
+						<td align="left">{{ one.title }}</td>
+						<td align="left">{{ one.desc }}</td>
+						<td>{{ one.type }}</td>
+						<td align="left">{{ one.money != '' ? one.money + '元' : '' }}</td>
 					</tr>
 					<tr>
 						<th align="center">报销合计</th>
@@ -72,13 +72,47 @@ export default {
 			anleihen: null,
 			money_1: 0,
 			money_2: 0,
-			content:[],
-			qrCodeBase64:null
+			content: [],
+			qrCodeBase64: null
 		};
 	},
 	methods: {
-		
-
+		init: function(id) {
+			let that = this;
+			that.visible = true;
+			that.dept = null;
+			that.name = null;
+			that.date = null;
+			that.amount = null;
+			that.balance = null;
+			that.anleihen = null;
+			that.money_1 = 0;
+			that.money_2 = 0;
+			that.content = [];
+			that.$http('reim/searchReimById', 'POST', { id: id }, true, function(resp) {
+				that.dept = resp.dept;
+				that.name = resp.name;
+				that.date = resp.date;
+				that.amount = resp.amount;
+				that.balance = resp.balance;
+				that.anleihen = resp.anleihen;
+				if (that.anleihen > that.amount) {
+					that.money_1 = that.anleihen - that.amount;
+				} else if (that.anleihen < that.amount) {
+					that.money_2 = that.amount - that.anleihen;
+				}
+				let content = JSON.parse(resp.content);
+				let temp = 5 - content.length;
+				for (let i = 0; i < temp; i++) {
+					content.push({ title: '', desc: '', type: '', money: '' });
+				}
+				that.content = content;
+				that.qrCodeBase64 = resp.qrCodeBase64;
+			});
+		},
+		cancel: function() {
+			this.visible = false;
+		},
 		smalltoBIG: function(n) {
 			var fraction = ['角', '分'];
 			var digit = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖'];

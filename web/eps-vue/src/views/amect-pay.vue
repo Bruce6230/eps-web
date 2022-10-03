@@ -25,7 +25,40 @@ export default {
 		};
 	},
 	methods: {
-		
+		init: function(id) {
+			let that = this;
+			that.visible = true;
+			that.dataForm.id = id;
+			that.result = false;
+			that.$nextTick(() => {
+				//利用WebSocket接受后端推送的付款结果
+				let token = that.$cookies.get('token');
+				that.$socket.sendObj({opt:"pay_amect",token:token})
+				that.$options.sockets.onmessage=function(resp){
+					let data=resp.data
+					if(data=="收款成功"){
+						that.result=true
+					}
+				}
+				that.$http('amect/createNativeAmectPayOrder', 'POST', { amectId: id }, true, function(resp) {
+					that.qrCode = resp.qrCodeBase64;
+				});
+			});
+		},
+		cancelHandle:function(){
+			this.visible=false
+		},
+		successHandle:function(){
+			let that=this
+			that.visible=false
+			that.$http("amect/searchNativeAmectPayResult","POST",{amectId:that.dataForm.id},true,function(resp){
+				that.$emit("refreshDataList")
+			})
+		},
+		closeHandle:function(){
+			this.visible=false
+			this.$emit("refreshDataList")
+		}
 	}
 };
 </script>

@@ -10,15 +10,15 @@
 				<div class="bottom">
 					<div class="remark-container">
 						<div class="ball blue">1</div>
-						<div class="remark">超哥</div>
+						<div class="remark">先进的技术</div>
 					</div>
 					<div class="remark-container">
 						<div class="ball red">2</div>
-						<div class="remark">博哥</div>
+						<div class="remark">强大的团队</div>
 					</div>
 					<div class="remark-container">
 						<div class="ball green">3</div>
-						<div class="remark">政融</div>
+						<div class="remark">丰富的经验</div>
 					</div>
 				</div>
 			</el-col>

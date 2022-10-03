@@ -56,24 +56,23 @@ export default {
 			});
 		},
 		dataFormSubmit:function(){
-			let that = this
+			let that=this
 			that.$refs["dataForm"].validate(function(valid){
 				if(valid){
-					let data = {password:that.dataForm.confirmPassword}
-					that.$http("user/updatePassword","POST",data,true,function(response){
-						if(response.rows==1){
+					let data={password:that.dataForm.confirmPassword}
+					that.$http("user/updatePassword","POST",data,true,function(resp){
+						if(resp.rows==1){
 							that.$message({
-								message: "密码修改成功",
-								type: "success",
+								message: '密码修改成功',
+								type: 'success',
 								duration: 1200,
 							});
-							that.visible=false;
+							that.visible = false;
 						}
-						else
-						{
+						else{
 							that.$message({
-								message: "密码修改失败",
-								type: "error",
+								message: '密码修改失败',
+								type: 'error',
 								duration: 1200,
 							});
 						}

@@ -48,7 +48,7 @@ public class UserController {
     @PostMapping("/checkQrCode")
     @Operation(summary = "检测登陆验证码")
     public Response checkQrCode(@Valid @RequestBody CheckQrCodeForm form) {
-        boolean bool = userService.checkQrCode(form.getCode(), form.getUuid());
+        boolean bool = userService.checkQrCode(form.getUuid());
         return Response.ok().put("result", bool);
     }
 
@@ -116,11 +116,21 @@ public class UserController {
         Integer userId=userService.login(param);
         Response r=Response.ok().put("result",userId!=null?true:false);
         if(userId!=null){
+            //设置登录认证Id
             StpUtil.setLoginId(userId);
             Set<String> permissions=userService.searchUserPermissions(userId);
             r.put("permissions",permissions);
         }
         return r;
+    }
+
+
+    @PostMapping("/searchNameAndDept")
+    @Operation(summary = "查找员工姓名和部门")
+    @SaCheckLogin
+    public Response searchNameAndDept(@Valid @RequestBody SearchNameAndDeptForm form) {
+        HashMap map = userService.searchNameAndDept(form.getId());
+        return Response.ok(map);
     }
 
     @GetMapping("/logout")

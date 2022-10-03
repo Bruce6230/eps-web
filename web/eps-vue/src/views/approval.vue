@@ -34,6 +34,8 @@
 			size="medium"
 			style="width: 100%;"
 			@expand-change="expand"
+			:row-key="getRowKeys"
+			:expand-row-keys="expands"
 		>
 			<el-table-column prop="remark" header-align="center" align="center" type="expand">
 				<template #default="scope">
@@ -63,9 +65,13 @@
 								<tr>
 									<th><span>审批结果</span></th>
 									<td>
-										<span v-if="scope.row.status!='已结束'">审批中</span>
-										<span v-if="scope.row.status=='已结束'&&scope.row.result=='同意'">已同意</span>
-										<span v-if="scope.row.status=='已结束'&&scope.row.result=='不同意'">已拒绝</span>
+										<span v-if="scope.row.status != '已结束'">审批中</span>
+										<span v-if="scope.row.status == '已结束' && scope.row.result == '同意'">
+											已同意
+										</span>
+										<span v-if="scope.row.status == '已结束' && scope.row.result == '不同意'">
+											已拒绝
+										</span>
 									</td>
 								</tr>
 							</tbody>
@@ -93,9 +99,13 @@
 								<tr>
 									<th><span>审批结果</span></th>
 									<td>
-										<span v-if="scope.row.status!='已结束'">审批中</span>
-										<span v-if="scope.row.status=='已结束'&&scope.row.result=='同意'">已同意</span>
-										<span v-if="scope.row.status=='已结束'&&scope.row.result=='不同意'">已拒绝</span>
+										<span v-if="scope.row.status != '已结束'">审批中</span>
+										<span v-if="scope.row.status == '已结束' && scope.row.result == '同意'">
+											已同意
+										</span>
+										<span v-if="scope.row.status == '已结束' && scope.row.result == '不同意'">
+											已拒绝
+										</span>
 									</td>
 								</tr>
 							</tbody>
@@ -123,9 +133,13 @@
 								<tr>
 									<th><span>审批结果</span></th>
 									<td>
-										<span v-if="scope.row.status!='已结束'">审批中</span>
-										<span v-if="scope.row.status=='已结束'&&scope.row.result=='同意'">已同意</span>
-										<span v-if="scope.row.status=='已结束'&&scope.row.result=='不同意'">已拒绝</span>
+										<span v-if="scope.row.status != '已结束'">审批中</span>
+										<span v-if="scope.row.status == '已结束' && scope.row.result == '同意'">
+											已同意
+										</span>
+										<span v-if="scope.row.status == '已结束' && scope.row.result == '不同意'">
+											已拒绝
+										</span>
 									</td>
 								</tr>
 							</tbody>
@@ -140,23 +154,20 @@
 					</div>
 				</template>
 			</el-table-column>
-			<el-table-column
-				type="index"
-				header-align="center"
-				align="center"
-				label="序号"
-				width="100"
-			/>
-			<el-table-column prop="title" header-align="center" align="center" label="审批事项" min-width="400"/>
+			<el-table-column type="index" header-align="center" align="center" label="序号" width="100" />
+			<el-table-column prop="title" header-align="center" align="center" label="审批事项" min-width="400" />
 			<el-table-column prop="type" header-align="center" align="center" label="类别" min-width="180" />
 			<el-table-column prop="creatorName" header-align="center" align="center" label="申请人" min-width="150" />
 			<el-table-column prop="createDate" header-align="center" align="center" label="发起日期" min-width="180" />
 			<el-table-column prop="status" header-align="center" align="center" label="状态" min-width="150">
 				<template #default="scope">
-					<span v-if="scope.row.status!='已结束'" style="color: orange;">审批中</span>
-					<span v-if="scope.row.status=='已结束'&&scope.row.result=='同意'" style="color: #17B3A3;">已同意</span>
-					<span v-if="scope.row.status=='已结束'&&scope.row.result=='不同意'" style="color: #f56c6c;">已拒绝</span>
-					
+					<span v-if="scope.row.status != '已结束'" style="color: orange;">审批中</span>
+					<span v-if="scope.row.status == '已结束' && scope.row.result == '同意'" style="color: #17B3A3;">
+						已同意
+					</span>
+					<span v-if="scope.row.status == '已结束' && scope.row.result == '不同意'" style="color: #f56c6c;">
+						已拒绝
+					</span>
 				</template>
 			</el-table-column>
 			<el-table-column header-align="center" align="center" width="150" label="操作">
@@ -164,7 +175,7 @@
 					<el-button
 						type="text"
 						size="medium"
-						v-if="isAuth(['ROOT', 'WORKFLOW:APPROVAL']) && dataForm.status == '待审批'&&!scope.row.filing"
+						v-if="isAuth(['ROOT', 'WORKFLOW:APPROVAL']) && dataForm.status == '待审批' && !scope.row.filing"
 						@click="approveHandle(scope.row.taskId)"
 					>
 						审批
@@ -180,10 +191,7 @@
 					<el-button
 						type="text"
 						size="medium"
-						v-if="
-							isAuth(['ROOT', 'FILE:ARCHIVE']) &&
-								scope.row.filing
-						"
+						v-if="isAuth(['ROOT', 'FILE:ARCHIVE']) && scope.row.filing"
 						@click="archive(scope.row.taskId)"
 					>
 						归档
@@ -216,6 +224,7 @@ export default {
 			pageSize: 10,
 			totalPage: 0,
 			dataListLoading: false,
+			dataListSelections: [],
 			archiveVisible: false,
 			dataForm: {
 				creatorName: null,
@@ -230,14 +239,143 @@ export default {
 			archiveList: [],
 			dataRule: {
 				creatorName: [{ required: false, pattern: '^[\u4e00-\u9fa5]{2,20}$', message: '姓名格式错误' }],
-				instanceId: [{ required: false, pattern: '^[0-9A-Za-z\\-]{36}$', message: '实例编号格式错误' }]
+				instanceId: [
+					{
+						required: false,
+						pattern: '^[0-9A-Za-z\\-]{36}$',
+						message: '实例编号格式错误'
+					}
+				]
+			},
+			expands: [],
+			getRowKeys(row) {
+				return row.taskId;
 			}
 		};
 	},
 	methods: {
-		
+		// 获取数据列表
+		loadDataList: function() {
+			let that = this;
+			that.dataListLoading = true;
+			let data = {
+				creatorName: that.dataForm.creatorName,
+				type: that.dataForm.type,
+				status: that.dataForm.status,
+				instanceId: that.dataForm.instanceId,
+				page: that.pageIndex,
+				length: that.pageSize
+			};
+			that.$http('approval/searchTaskByPage', 'POST', data, true, function(resp) {
+				let page = resp.page;
+				that.dataList = page.list;
+				that.totalCount = page.totalCount;
+				that.dataListLoading = false;
+			});
+		},
+		searchHandle: function() {
+			this.$refs['dataForm'].validate(valid => {
+				if (valid) {
+					this.$refs['dataForm'].clearValidate();
+					if (this.dataForm.creatorName == '') {
+						this.dataForm.creatorName = null;
+					}
+					if (this.dataForm.instanceId == '') {
+						this.dataForm.instanceId = null;
+					}
+					if (this.pageIndex != 1) {
+						this.pageIndex = 1;
+					}
+					this.loadDataList();
+				} else {
+					return false;
+				}
+			});
+		},
+		expand: function(row, expandedRows) {
+			let that = this;
+			if (expandedRows.length > 0) {
+				that.expands = [];
+				if (row) {
+					that.expands.push(row.taskId);
+					let data = {
+						instanceId: row.processId,
+						type: row.type,
+						status: row.status
+					};
+					
+					that.$http('approval/searchApprovalContent', 'POST', data, false, function(resp) {
+						let content = resp.content;
+						that.content = content;
+						if (content.hasOwnProperty('files')) {
+							for (let one of content.files) {
+								that.archiveList.push(one.url);
+							}
+						}
+
+						if (row.type == '报销申请') {
+							if (content.typeId == 1) {
+								content.type = '普通报销';
+							} else if (content.typeId == 2) {
+								content.type = '差旅报销';
+							}
+						}
+					});
+					
+					that.bpmnUrl =
+						that.$baseUrl +
+						'approval/searchApprovalBpmn' +
+						'?instanceId=' +
+						row.processId +
+						'&time=' +
+						new Date().getTime();
+					that.bpmnList = [that.bpmnUrl];
+				}
+			} else {
+				that.expands = [];
+			}
+		},
+		approve: function(taskId, approval) {
+			let that = this;
+			that.dataListLoading = true;
+			let data = {
+				taskId: taskId,
+				approval: approval
+			};
+			that.$http('approval/approvalTask', 'POST', data, true, function(resp) {
+				that.pageIndex = 1;
+				that.loadDataList();
+			});
+		},
+		approveHandle: function(taskId) {
+			let that = this;
+			that.$confirm('请选择对该条申请的处理意见', '提示', {
+				confirmButtonText: '同意',
+				cancelButtonText: '否决',
+				type: 'warning',
+				distinguishCancelAndClose: true,
+				callback: function(action) {
+					if (action == 'confirm') {
+						that.approve(taskId, '同意');
+					} else if (action == 'cancel') {
+						that.approve(taskId, '不同意');
+					}
+				}
+			});
+		},
+		viewHandle: function(row) {
+			this.$refs.approvalTable.toggleRowExpansion(row, true);
+		},
+		archive: function(taskId) {
+			this.archiveVisible = true;
+			this.$nextTick(() => {
+				this.$refs.archive.init(taskId);
+			});
+		}
 	},
-	
+	created: function() {
+		this.loadDataList();
+	}
 };
 </script>
 

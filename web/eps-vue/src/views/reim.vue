@@ -70,13 +70,7 @@
 			style="width: 100%;"
 			size="medium"
 		>
-			<el-table-column
-				width="40px"
-				prop="content"
-				header-align="center"
-				align="center"
-				type="expand"
-			>
+			<el-table-column width="40px" prop="content" header-align="center" align="center" type="expand">
 				<template #default="scope">
 					<div class="reim-table">
 						<div class="row">
@@ -96,38 +90,14 @@
 					</div>
 				</template>
 			</el-table-column>
-			<el-table-column
-				type="index"
-				header-align="center"
-				align="center"
-				width="100"
-				label="序号"
-			>
+			<el-table-column type="index" header-align="center" align="center" width="100" label="序号">
 				<template #default="scope">
 					<span>{{ (pageIndex - 1) * pageSize + scope.$index + 1 }}</span>
 				</template>
 			</el-table-column>
-			<el-table-column
-				prop="type"
-				header-align="center"
-				align="center"
-				label="报销类型"
-				min-width="150"
-			/>
-			<el-table-column
-				prop="name"
-				header-align="center"
-				align="center"
-				label="申请人"
-				min-width="150"
-			/>
-			<el-table-column
-				prop="deptName"
-				header-align="center"
-				align="center"
-				label="所属部门"
-				width="150"
-			/>
+			<el-table-column prop="type" header-align="center" align="center" label="报销类型" min-width="150" />
+			<el-table-column prop="name" header-align="center" align="center" label="申请人" min-width="150" />
+			<el-table-column prop="deptName" header-align="center" align="center" label="所属部门" width="150" />
 			<el-table-column header-align="center" align="center" label="报销金额" min-width="120">
 				<template #default="scope">
 					<span>{{ scope.row.amount }}元</span>
@@ -143,28 +113,11 @@
 					<span>{{ scope.row.balance }}元</span>
 				</template>
 			</el-table-column>
-			<el-table-column
-				prop="status"
-				header-align="center"
-				align="center"
-				label="状态"
-				min-width="100"
-			/>
-			<el-table-column
-				prop="createTime"
-				header-align="center"
-				align="center"
-				label="申请日期"
-				width="150"
-			/>
+			<el-table-column prop="status" header-align="center" align="center" label="状态" min-width="100" />
+			<el-table-column prop="createTime" header-align="center" align="center" label="申请日期" width="150" />
 			<el-table-column header-align="center" align="center" min-width="150" label="操作">
 				<template #default="scope">
-					<el-button 
-						type="text" 
-						size="medium"
-						@click="pdfHandle(scope.row.id)">
-						报销单
-					</el-button>
+					<el-button type="text" size="medium" @click="pdfHandle(scope.row.id)">报销单</el-button>
 					<el-button
 						type="text"
 						size="medium"
@@ -212,9 +165,7 @@ export default {
 			totalCount: 0,
 			dataListLoading: false,
 			dataRule: {
-				name: [
-					{ required: false, pattern: '^[\u4e00-\u9fa5]{1,10}$', message: '姓名格式错误' }
-				]
+				name: [{ required: false, pattern: '^[\u4e00-\u9fa5]{1,10}$', message: '姓名格式错误' }]
 			},
 			addVisible: false,
 			pdfVisible: false
@@ -227,9 +178,111 @@ export default {
 				that.deptList = resp.list;
 			});
 		},
+		loadDataList: function() {
+			let that = this;
+			that.dataListLoading = true;
+			let data = {
+				name: that.dataForm.name,
+				deptId: that.dataForm.deptId,
+				typeId: that.dataForm.typeId,
+				status: that.dataForm.status,
+				page: that.pageIndex,
+				length: that.pageSize
+			};
+			if (that.dataForm.date != null && that.dataForm.date.length == 2) {
+				let startDate = that.dataForm.date[0];
+				let endDate = that.dataForm.date[1];
+				data.startDate = dayjs(startDate).format('YYYY-MM-DD');
+				data.endDate = dayjs(endDate).format('YYYY-MM-DD');
+			}
+			that.$http('reim/searchReimByPage', 'POST', data, true, function(resp) {
+				let page = resp.page;
+				let status = {
+					1: '待审批',
+					2: '已否决',
+					3: '已通过',
+					4: '已归档'
+				};
+				let type = { 1: '普通报销', 2: '差旅报销' };
+				for (let one of page.list) {
+					one.status = status[one.status];
+					one.type = type[one.typeId];
+					one.content = JSON.parse(one.content);
+				}
+				that.dataList = page.list;
+				that.totalCount = page.totalCount;
+				that.dataListLoading = false;
+			});
+		},
+		sizeChangeHandle: function(val) {
+			this.pageSize = val;
+			this.pageIndex = 1;
+			this.loadDataList();
+		},
+		currentChangeHandle: function(val) {
+			this.pageIndex = val;
+			this.loadDataList();
+		},
+		searchHandle: function() {
+			this.$refs['dataForm'].validate(valid => {
+				if (valid) {
+					this.$refs['dataForm'].clearValidate();
+					if (this.dataForm.name == '') {
+						this.dataForm.name = null;
+					}
+					if (this.pageIndex != 1) {
+						this.pageIndex = 1;
+					}
+					this.loadDataList();
+				} else {
+					return false;
+				}
+			});
+		},
+		addHandle: function() {
+			this.addVisible = true;
+			this.$nextTick(() => {
+				this.$refs.add.init();
+			});
+		},
+		pdfHandle: function(id) {
+			this.pdfVisible = true;
+			this.$nextTick(() => {
+				this.$refs.pdf.init(id);
+			});
+		},
+		deleteHandle:function(id){
+			let that=this
+			that.$confirm(`确定要删除选中的记录？`, '提示', {
+				confirmButtonText: '确定',
+				cancelButtonText: '取消',
+				type: 'warning',
+			}).then(() => {
+				that.$http("reim/deleteReimById","POST",{id:id},true,function(resp){
+					if(resp.rows==1){
+						that.$message({
+							message: '操作成功',
+							type: 'success',
+							duration: 1200,
+							onClose: () => {
+								that.loadDataList();
+							}
+						});
+					}
+					else{
+						that.$message({
+							message: '未能删除记录',
+							type: 'warning',
+							duration: 1200,
+						});
+					}
+				})
+			})
+		}
 	},
 	created: function() {
 		this.loadDeptList();
+		this.loadDataList();
 	}
 };
 </script>

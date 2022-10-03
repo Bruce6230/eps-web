@@ -105,6 +105,40 @@ export default {
 				}
 			});
 		},
+        dataFormSubmit:function(){
+            let that=this
+            let data={
+                userId: that.dataForm.members,
+                amount: that.dataForm.amount,
+                typeId: that.dataForm.typeId,
+                reason: that.dataForm.reason
+            }
+            if(that.dataForm.id){
+                data.id=that.dataForm.id
+            }
+            that.$refs["dataForm"].validate(valid=>{
+                if(valid){
+                    that.$http(`amect/${!that.dataForm.id ? 'insert' : 'update'}`,"POST",data,true,function(resp){
+                        if(resp.rows>0){
+                            that.visible = false;
+                            that.$emit('refreshDataList');
+                            that.$message({
+                                message: '操作成功',
+                                type: 'success',
+                                duration: 1200
+                            });
+                        }
+                        else{
+                            that.$message({
+                                message: '操作失败',
+                                type: 'error',
+                                duration: 1200
+                            });
+                        }
+                    })
+                }
+            })
+        }
 		
 	}
 };

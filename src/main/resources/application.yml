@@ -90,9 +90,25 @@ tencent:
     region: 存储桶的区域
     bucket: 存储桶的名字
   trtc:
-    appId: 1400726261
-    secretKey: 5f4361c517fd085ef94681dd8cbb05e226129165902bec6cf7ae30d7bfd72b29
+    appId: 1400738366
+    secretKey: 42bc804c362502bf24e6a649d8354d49619a0b32e79231963fba9bb2197fd3f3
     expire: 86400
 wx:
   app-id: wx790a007e30c8a49c
   app-secret: 64ba05a839bd06eedab787807c31e441
+eps:
+  jwt:
+    secret: lin171820 #密钥
+    expire: 5 #过期时间
+    cache-expire: 10 #缓存过期时间
+  face:
+    createFaceModelUrl: http://192.168.1.107:5001/create_face_model
+    checkinUrl: http://192.168.1.107:5001/checkin
+  email:
+    system: lin171820@gmail.com
+    hr: lin171820@gmail.com
+  image-folder: D:/epidemic-prevention-system/images
+  recieveNotify: http://192.168.1.107:5001/epidemic-prevention-system/meeting/recieveNotify
+workflow:
+#  url地址出错
+  url: http://192.168.1.107:9090/emos-workflow

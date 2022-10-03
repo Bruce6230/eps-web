@@ -240,16 +240,17 @@ img {
 			}
 		}
 	}
+	.icon-svg {
+		width: 1em;
+		height: 1em;
+		fill: currentColor;
+		overflow: hidden;
+	}
+
 	.duanxin-svg {
 		width: 1.4rem;
 		height: 1.4rem;
 	}
-}
-.icon-svg {
-	width: 1.4rem;
-	height: 1.4rem;
-	fill: currentColor;
-	overflow: hidden;
 }
 
 /* Sidebar

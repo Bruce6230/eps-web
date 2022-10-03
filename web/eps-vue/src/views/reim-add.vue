@@ -134,6 +134,76 @@ export default {
 				that.dataForm.project = [{ title: null, type: null, desc: null, money: null }];
 			});
 		},
+		addHandle: function() {
+			let that = this;
+			if (that.dataForm.project.length == 5) {
+				that.$message({
+					message: '这笔报销不能超过5个报销项目',
+					type: 'warning',
+					duration: 1200
+				});
+				return;
+			}
+			that.dataForm.project.push({ title: null, type: null, desc: null, money: null });
+			that.$message({
+				message: '添加成功',
+				type: 'success',
+				duration: 1200
+			});
+		},
+		deleteProjectHandle: function(index) {
+			let that = this;
+			if (that.dataForm.project.length == 1) {
+				that.$message({
+					message: '不能删除仅存的报销项目',
+					type: 'warning',
+					duration: 1200
+				});
+			} else {
+				that.dataForm.project.splice(index, 1);
+				that.$message({
+					message: '删除成功',
+					type: 'success',
+					duration: 1200
+				});
+			}
+		},
+		dataFormSubmit:function(){
+			let that=this
+			this.$refs['dataForm'].validate(valid => {
+				if (valid) {
+					let amount=0
+					for(let one of that.dataForm.project){
+						amount+=Number(one.money)
+					}
+					let data={
+						typeId: that.dataForm.type == '普通报销' ? 1 : 2,
+						amount: amount,
+						anleihen: that.dataForm.anleihen,
+						balance: amount - Number(that.dataForm.anleihen),
+						content: JSON.stringify(that.dataForm.project)
+					}
+					that.$http("reim/insert","POST",data,true,function(resp){
+						if(resp.rows==1){
+							that.$message({
+								message: '操作成功',
+								type: 'success',
+								duration: 1200,
+							});
+							that.visible=false
+							that.$emit('refreshDataList');
+						}
+						else{
+							that.$message({
+								message: '操作失败',
+								type: 'error',
+								duration: 1200,
+							});
+						}
+					})
+				}
+			})
+		}
 		
 		
 	}

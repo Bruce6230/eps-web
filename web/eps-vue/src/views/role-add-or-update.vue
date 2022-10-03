@@ -64,42 +64,6 @@ export default {
 	},
 
 	methods: {
-		dataFormSubmit: function() {
-		    let that = this;
-		    this.$refs['dataForm'].validate(valid => {
-		        if (valid) {
-		            //因为用户是随机选择权限，所以对选中的权限排序
-		            that.dataForm.permissions.sort(function(a, b) {
-		                return a - b;
-		            });
-		            //判断用户选择的权限和原来的权限是否一致？把数组转换成字符串，简化比较两个数组是否一致
-		            if (that.dataForm.permissions.join() != that.oldPermissions.join()) {
-		                that.dataForm.changed = true;
-		            } else {
-		                that.dataForm.changed = false;
-		            }
-		            that.$http(`role/${!that.dataForm.id ? 'insert' : 'update'}`, 'POST', that.dataForm, true, function(
-		                resp
-		            ) {
-		                if (resp.rows == 1) {
-		                    that.$message({
-		                        message: '操作成功',
-		                        type: 'success',
-		                        duration: 1200
-		                    });
-		                    that.visible = false;
-		                    that.$emit('refreshDataList');
-		                } else {
-		                    that.$message({
-		                        message: '操作失败',
-		                        type: 'error',
-		                        duration: 1200
-		                    });
-		                }
-		            });
-		        }
-		    });
-		},
 		init: function(id, systemic) {
 			let that = this;
 			that.dataForm.id = id || 0;
@@ -131,7 +95,42 @@ export default {
 				});
 			});
 		},
-		
+		dataFormSubmit: function() {
+			let that = this;
+			this.$refs['dataForm'].validate(valid => {
+				if (valid) {
+					//对现有的权限排序
+					that.dataForm.permissions.sort(function(a, b) {
+						return a - b;
+					});
+					//判断用户选择的权限和原来的权限是否一致？
+					if (that.dataForm.permissions.join() != that.oldPermissions.join()) {
+						that.dataForm.changed = true;
+					} else {
+						that.dataForm.changed = false;
+					}
+					that.$http(`role/${!that.dataForm.id ? 'insert' : 'update'}`, 'POST', that.dataForm, true, function(
+						resp
+					) {
+						if (resp.rows == 1) {
+							that.$message({
+								message: '操作成功',
+								type: 'success',
+								duration: 1200
+							});
+							that.visible = false;
+							that.$emit('refreshDataList');
+						} else {
+							that.$message({
+								message: '操作失败',
+								type: 'error',
+								duration: 1200
+							});
+						}
+					});
+				}
+			});
+		}
 	}
 };
 </script>
