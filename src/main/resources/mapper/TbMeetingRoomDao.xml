@@ -19,14 +19,14 @@
     <select id="searchFreeMeetingRoom" parameterType="HashMap" resultType="String">
         SELECT temp.name
         FROM (
-                SELECT mr.`name`, m.id
-                FROM tb_meeting_room mr
-                LEFT JOIN tb_meeting m ON mr.`name`=m.place
-                AND m.date=#{date}
-                AND(
-                    (#{start} BETWEEN m.`start` AND m.`end`) OR
-                    (#{end} BETWEEN m.`start` AND m.`end`)
-                )
+                 SELECT mr.`name`, m.id
+                 FROM tb_meeting_room mr
+                          LEFT JOIN tb_meeting m ON mr.`name`=m.place
+                     AND m.date=#{date}
+                     AND(
+                                                            (#{start} BETWEEN m.`start` AND m.`end`) OR
+                                                            (#{end} BETWEEN m.`start` AND m.`end`)
+                                                        )
              ) temp
         WHERE temp.id IS NULL
     </select>
@@ -67,6 +67,18 @@
         </if>
         ) AS temp
     </select>
+    <select id="searchCanDelete" resultType="boolean">
+        SELECT IF( SUM( temp.meetings ) > 0, FALSE, TRUE ) AS result FROM (
+        SELECT COUNT( m.id ) AS meetings
+        FROM tb_meeting_room mr
+        JOIN tb_meeting m ON m.type=2 AND mr.`name`=m.place
+        WHERE mr.id IN
+        <foreach collection="array" open="(" separator="," close=")" item="one">
+            #{one}
+        </foreach>
+        GROUP BY mr.id
+        ) temp
+    </select>
     <insert id="insert" parameterType="com.makiyo.eps.api.pojo.TbMeetingRoom">
         INSERT INTO tb_meeting_room
         SET name=#{name},
@@ -86,19 +98,6 @@
             status=#{status}
         WHERE id=#{id}
     </update>
-    <select id="searchCanDelete" resultType="boolean">
-        SELECT IF( SUM( temp.meetings ) > 0, FALSE, TRUE ) AS result FROM (
-        SELECT COUNT( m.id ) AS meetings
-        FROM tb_meeting_room mr
-        JOIN tb_meeting m ON m.type=2 AND mr.`name`=m.place
-        WHERE mr.id IN
-        <foreach collection="array" open="(" separator="," close=")" item="one">
-            #{one}
-        </foreach>
-        GROUP BY mr.id
-        ) temp
-    </select>
-
     <delete id="deleteMeetingRoomByIds">
         DELETE FROM tb_meeting_room
         WHERE id IN
