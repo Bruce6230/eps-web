@@ -141,12 +141,18 @@
             :total="totalCount"
             layout="total, sizes, prev, pager, next, jumper"
         ></el-pagination>
+        <add-or-update v-if="addOrUpdateVisible" ref="addOrUpdate" @refreshDataList="loadDataList"></add-or-update>
+        <dimiss v-if="dimissVisible" ref="dimiss" @refreshDataList="loadDataList"></dimiss>
     </div>
 </template>
 
 <script>
+import AddOrUpdate from './user-add-or-update.vue';
+import Dimiss from './dimiss.vue';
 export default {
     components: {
+        AddOrUpdate,
+        Dimiss
     },
     data() {
         return {

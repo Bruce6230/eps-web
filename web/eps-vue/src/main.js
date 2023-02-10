@@ -91,6 +91,51 @@ let baseUrl = "http://localhost:8090/eps-web/"
 
 app.config.globalProperties.$baseUrl = baseUrl //设置全局变量$baseUrl
 
+app.config.globalProperties.$https = function(url, method, data, async, fun) {
+	$.ajax({
+		url: url,
+		type: method,
+		dataType: 'json',
+		contentType: "application/json",
+		xhrFields: {
+			withCredentials: true
+		},
+		async: async,
+		data: JSON.stringify(data),
+		success: function(resp) {
+			if (resp.code == 200) {
+				fun(resp)
+			} else {
+				ElMessage.error({
+					message: resp.msg,
+					duration: 1200
+				});
+			}
+		},
+		error: function(e) {
+			if (e.status == undefined) {
+				ElMessage.error({
+					message: "前端页面错误",
+					duration: 1200
+				});
+			} else {
+				let status = e.status
+				if (status == 401) {
+					router.push({
+						name: 'Login'
+					})
+				} else {
+					ElMessage.error({
+						message: e.responseText,
+						duration: 1200
+					});
+				}
+			}
+
+		}
+	})
+}
+
 //封装全局Ajax公共函数
 app.config.globalProperties.$http = function(url, method, data, async, fun) {
 	$.ajax({

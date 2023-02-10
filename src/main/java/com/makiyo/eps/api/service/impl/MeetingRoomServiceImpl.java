@@ -64,4 +64,5 @@ public class MeetingRoomServiceImpl implements MeetingRoomService {
         int rows = meetingRoomDao.deleteMeetingRoomByIds(ids);
         return rows;
     }
+
 }

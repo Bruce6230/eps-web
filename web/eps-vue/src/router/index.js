@@ -20,8 +20,8 @@ import AmectType from "../views/amect_type.vue"
 import AmectReport from "../views/amect_report.vue"
 import Reim from "../views/reim.vue"
 import NotFound from "../views/404.vue"
-import Control from "../views/control.vue"
-import Fire from "../views/fire.vue"
+import Translation from "../views/translation.vue"
+
 
 const routes = [{
 		path: '/login',
@@ -41,20 +41,11 @@ const routes = [{
 				}
 			},
 			{
-				path: "/control",
-				name: "Control",
-				component: Control,
+				path: "/translation",
+				name: "Translation",
+				component: Translation,
 				meta: {
-					title: "布控预警",
-					isTab: true
-				}
-			},
-			{
-				path: "/fire",
-				name: "Fire",
-				component: Fire,
-				meta: {
-					title: "火灾检测",
+					title: "疲劳检测",
 					isTab: true
 				}
 			},

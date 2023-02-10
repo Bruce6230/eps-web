@@ -12,7 +12,7 @@
                     <el-col :span="12">
                         <div class="right">
                             <div class="title-container">
-                                <h2>Eps在线办公平台</h2>
+                                <h2>WC智云</h2>
                                 <span>( Ver 1.0 )</span>
                             </div>
                             <div v-if="!qrCodeVisible">

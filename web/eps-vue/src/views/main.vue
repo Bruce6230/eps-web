@@ -8,8 +8,8 @@
 		<nav class="site-navbar" :class="'site-navbar--' + navbarLayoutType">
 			<div class="site-navbar__header">
 				<h1 class="site-navbar__brand">
-					<a class="site-navbar__brand-lg">Eps在线办公系统</a>
-					<a class="site-navbar__brand-mini">Eps</a>
+					<a class="site-navbar__brand-lg">WC智云</a>
+					<a class="site-navbar__brand-mini">WC</a>
 				</h1>
 			</div>
 			<div class="site-navbar__body clearfix">
@@ -58,29 +58,26 @@
 						<SvgIcon name="home" class="icon-svg" />
 						<span slot="title">首页</span>
 					</el-menu-item>
+					
 					<el-submenu
-						index="区域布控"
+						index="实时监控"
 						:popper-class="'site-sidebar--' + sidebarLayoutSkin + '-popper'"
 					>
 						<template #title>
-							<SvgIcon name="area_fill" class="icon-svg" />
-							<span slot="title">区域布控</span>
+							<SvgIcon name="users_fill" class="icon-svg" />
+							<span slot="title">实时监控</span>
 						</template>
 						<el-menu-item
-							index="control"
-							@click="$router.push({ name: 'Control' })"
+							index="translation"
+							@click="$router.push({ name: 'Translation' })"
+							ref="ABC"
 						>
-							<SvgIcon name="area_fill" class="icon-svg" />
-							<span slot="title">布控预警</span>
-						</el-menu-item>
-						<el-menu-item
-							index="fire"
-							@click="$router.push({ name: 'Fire'})"
-						>
-							<SvgIcon name="fire_fill" class="icon-svg"/>
-							<span slot="title">火灾检测</span>
+							<SvgIcon name="company_fill" class="icon-svg" />
+							<span slot="title">疲劳检测</span>
 						</el-menu-item>
 					</el-submenu>
+					
+					
 					<el-submenu
 						index="组织管理"
 						:popper-class="'site-sidebar--' + sidebarLayoutSkin + '-popper'"
