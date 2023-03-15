@@ -172,6 +172,7 @@
 							<span slot="title">线上会议</span>
 						</el-menu-item>
 					</el-submenu>
+					
 					<el-submenu
 						index="系统设置"
 						:popper-class="'site-sidebar--' + sidebarLayoutSkin + '-popper'"
@@ -187,6 +188,24 @@
 						>
 							<SvgIcon name="tool_fill" class="icon-svg" />
 							<span slot="title">罚款类型</span>
+						</el-menu-item>
+					</el-submenu>
+					
+					<el-submenu
+						index="Chatgpt"
+						:popper-class="'site-sidebar--' + sidebarLayoutSkin + '-popper'"
+					>
+						<template #title>
+							<SvgIcon name="chatgpt" class="icon-svg" />
+							<span slot="title">Chatgpt</span>
+						</template>
+						<el-menu-item
+							index="chatgpt"
+							@click="$router.push({ name: 'chatgpt' })"
+							ref="ABC"
+						>
+							<SvgIcon name="chatgpt" class="icon-svg" />
+							<span slot="title">Chatgpt</span>
 						</el-menu-item>
 					</el-submenu>
 				</el-menu>

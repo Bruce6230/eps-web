@@ -21,6 +21,7 @@ import AmectReport from "../views/amect_report.vue"
 import Reim from "../views/reim.vue"
 import NotFound from "../views/404.vue"
 import Translation from "../views/translation.vue"
+import Chatgpt from "../views/chatgpt.vue"
 
 
 const routes = [{
@@ -162,6 +163,15 @@ const routes = [{
 				component: Reim,
 				meta: {
 					title: '报销管理',
+					isTab: true
+				}
+			},
+			{
+				path: '/chatgpt',
+				name: 'Chatgpt',
+				component: Chatgpt,
+				meta: {
+					title: 'Chatgpt',
 					isTab: true
 				}
 			}

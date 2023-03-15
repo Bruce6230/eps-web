@@ -13,14 +13,13 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/video")
-@Tag(name = "VideoController", description = "用户Web接口")
+@Tag(name = "VideoController", description = "疲劳检测")
 public class VideoController {
     @Autowired
     private VideoService videoService;
 
     @PostMapping("/fatigueDetection")
     public Response fatigueDetection(@RequestBody Map<String,String> map) {
-        System.out.println(map.get("photo"));
         String image = videoService.fatigueDetection(map.get("photo"));
         Response response = new Response();
         response.put("image",image);
