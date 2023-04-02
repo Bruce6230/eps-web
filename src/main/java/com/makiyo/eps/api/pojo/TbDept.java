@@ -4,11 +4,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 
-/**
- * tb_dept
- *
- * @author
- */
+
 @Data
 public class TbDept implements Serializable {
     /**

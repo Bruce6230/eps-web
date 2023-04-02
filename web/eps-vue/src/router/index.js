@@ -22,6 +22,8 @@ import Reim from "../views/reim.vue"
 import NotFound from "../views/404.vue"
 import Translation from "../views/translation.vue"
 import Chatgpt from "../views/chatgpt.vue"
+import Microexpressions from "../views/microexpressions.vue"
+import FireDetection from "../views/fire_detection.vue"
 
 
 const routes = [{
@@ -47,6 +49,24 @@ const routes = [{
 				component: Translation,
 				meta: {
 					title: "疲劳检测",
+					isTab: true
+				}
+			},
+			{
+				path: "/microexpressions",
+				name: "Microexpressions",
+				component: Microexpressions,
+				meta: {
+					title: "表情识别",
+					isTab: true
+				}
+			},
+			{
+				path: "/fire_detection",
+				name: "FireDetection",
+				component: FireDetection,
+				meta: {
+					title: "表情识别",
 					isTab: true
 				}
 			},

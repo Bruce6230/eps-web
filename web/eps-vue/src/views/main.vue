@@ -8,8 +8,8 @@
 		<nav class="site-navbar" :class="'site-navbar--' + navbarLayoutType">
 			<div class="site-navbar__header">
 				<h1 class="site-navbar__brand">
-					<a class="site-navbar__brand-lg">WC智云</a>
-					<a class="site-navbar__brand-mini">WC</a>
+					<a class="site-navbar__brand-lg">AI综合分析管理云平台</a>
+					<a class="site-navbar__brand-mini">VA</a>
 				</h1>
 			</div>
 			<div class="site-navbar__body clearfix">
@@ -64,7 +64,7 @@
 						:popper-class="'site-sidebar--' + sidebarLayoutSkin + '-popper'"
 					>
 						<template #title>
-							<SvgIcon name="users_fill" class="icon-svg" />
+							<SvgIcon name="monitor_fill" class="icon-svg" />
 							<span slot="title">实时监控</span>
 						</template>
 						<el-menu-item
@@ -72,8 +72,24 @@
 							@click="$router.push({ name: 'Translation' })"
 							ref="ABC"
 						>
-							<SvgIcon name="company_fill" class="icon-svg" />
+							<SvgIcon name="translation_fill" class="icon-svg" />
 							<span slot="title">疲劳检测</span>
+						</el-menu-item>
+						<el-menu-item
+							index="microexpressions"
+							@click="$router.push({ name: 'Microexpressions' })"
+							ref="ABC"
+						>
+							<SvgIcon name="microexpressions_fill" class="icon-svg" />
+							<span slot="title">表情识别</span>
+						</el-menu-item>
+						<el-menu-item
+							index="fire_detection"
+							@click="$router.push({ name: 'FireDetection' })"
+							ref="ABC"
+						>
+							<SvgIcon name="fire_fill" class="icon-svg" />
+							<span slot="title">火灾检测</span>
 						</el-menu-item>
 					</el-submenu>
 					
@@ -197,11 +213,11 @@
 					>
 						<template #title>
 							<SvgIcon name="chatgpt" class="icon-svg" />
-							<span slot="title">Chatgpt</span>
+							<span slot="title">Openai</span>
 						</template>
 						<el-menu-item
 							index="chatgpt"
-							@click="$router.push({ name: 'chatgpt' })"
+							@click="$router.push({ name: 'Chatgpt' })"
 							ref="ABC"
 						>
 							<SvgIcon name="chatgpt" class="icon-svg" />
