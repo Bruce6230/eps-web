@@ -11,6 +11,10 @@ server:
       max-file-size: 2MB
 
 spring:
+  mvc:
+    async:
+      request-timeout: 60000
+      dispatch-threads: 200
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
@@ -102,17 +106,21 @@ eps:
     expire: 5 #过期时间
     cache-expire: 10 #缓存过期时间
   face:
-    createFaceModelUrl: http://192.168.101.128:5001/create_face_model
-    checkinUrl: http://192.168.101.128:5001/checkin
-    fatigueDetectionUrl: http://192.168.101.128:5001/test
+    createFaceModelUrl: http://192.168.8.128:5001/create_face_model
+    checkinUrl: http://192.168.8.128:5001/checkin
+    fatigueDetectionUrl: http://192.168.8.128:5001/test
+    microExpressionsUrl: http://192.168.8.128:5001/test
+    fireDetectionUrl: http://192.168.8.128:5001/test
   email:
     system: lin171820@gmail.com
     hr: lin171820@gmail.com
   image-folder: D:/epidemic-prevention-system/images
-  recieveNotify: http://192.168.101.128:5001/eps-web/meeting/recieveNotify
+  recieveNotify: http://192.168.8.128:5001/eps-web/meeting/recieveNotify
 workflow:
 #  url地址出错
-  url: http://192.168.101.128:9090/emos-workflow
+  url: http://192.168.8.128:9090/emos-workflow
 chatgpt:
-  chatEndpoint: https://api.openai.com/v1/engines/davinci-codex/completions
-  apiKey: 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
+  chatEndpoint: ###
+  apiKey: ###
+env: test
+authorization: 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
