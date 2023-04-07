@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.makiyo.eps.api.service.VideoService;
+import com.makiyo.eps.api.utils.Response;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,7 @@ public class VideoServiceImpl implements VideoService {
 
     @Override
     public String fatigueDetection(String data) {
-        HttpRequest request = HttpUtil.createPost(flaskTaskUrl);
+        String base64Data = data.split(",")[1];
         // 创建一个 JSON 对象
         JSONObject jsonObject = new JSONObject();
         // 创建并添加 model 列表
@@ -50,22 +51,30 @@ public class VideoServiceImpl implements VideoService {
         jsonObject.put("models", modelsArray);
         // 将 JSON 对象转换为 JSON 字符串
         String json = jsonObject.toJSONString();
-        request.body(json);
-        HttpResponse response = request.execute();
-        JSONObject jsonobject = JSONObject.parseObject(response.body());
-        String id = jsonobject.getString("id");
+        HttpResponse response = HttpRequest.post(flaskTaskUrl)
+                .header("Content-Type", "application/json")
+                .body(json)
+                .execute();
+        // 获取响应结果
+        String result = response.body();
+        Response response1 = new Response();
+        response1.put("key",result);
+        JSONObject jsonObject1 = JSON.parseObject(result);
+        String id = jsonObject1.getString("id");
+        JSONObject jsonobject = new JSONObject();
         //用来请求处理后图片
-        HttpRequest httpRequest = HttpUtil.createPost(flaskFrameUrl);
-        JSONObject object = new JSONObject();
-        object.put("id",id);
+        jsonobject.put("id",id);
         //截取图片
-        String image = data.split(",")[1];
-        object.put("frame",image);
+        jsonobject.put("frame",base64Data);
         //发送请求
-        httpRequest.body(object.toJSONString());
-        HttpResponse httpResponse = httpRequest.execute();
-        JSONObject result = JSON.parseObject(httpResponse.body());
-        return result.getString("frame");
+        HttpResponse httpResponse = HttpUtil.createPost(flaskFrameUrl)
+                .header("Content-Type", "application/json")
+                .body(jsonobject.toJSONString())
+                .execute();
+        JSONObject parseObject = JSON.parseObject(httpResponse.body());
+        response1.put("image",parseObject.get("frame"));
+        String frame = "data:image/jpeg;base64,"+parseObject.get("frame").toString();
+        return frame;
     }
 
     @Override
@@ -82,10 +91,31 @@ public class VideoServiceImpl implements VideoService {
 
     @Override
     public String fireDetection(String data){
-        HttpRequest request = HttpUtil.createPost(flaskTaskUrl);
-        request.form("video",data);
-        HttpResponse response = request.execute();
-        String body = response.body();
-        return body;
+        String base64Data = data.split(",")[1];
+        String json = "{\"models\":[{\"type\": \"fireDetect\", \"confidenceLevel\": 0.4}]}";
+        HttpResponse response = HttpRequest.post(flaskTaskUrl)
+                .header("Content-Type", "application/json")
+                .body(json)
+                .execute();
+        // 获取响应结果
+        String result = response.body();
+        Response response1 = new Response();
+        response1.put("key",result);
+        JSONObject jsonObject1 = JSON.parseObject(result);
+        String id = jsonObject1.getString("id");
+        JSONObject jsonobject = new JSONObject();
+        //用来请求处理后图片
+        jsonobject.put("id",id);
+        //截取图片
+        jsonobject.put("frame",base64Data);
+        //发送请求
+        HttpResponse httpResponse = HttpUtil.createPost(flaskFrameUrl)
+                .header("Content-Type", "application/json")
+                .body(jsonobject.toJSONString())
+                .execute();
+        JSONObject parseObject = JSON.parseObject(httpResponse.body());
+        response1.put("image",parseObject.get("frame"));
+        String frame = "data:image/jpeg;base64,"+parseObject.get("frame").toString();
+        return frame;
     }
 }

@@ -108,8 +108,8 @@ eps:
   face:
     createFaceModelUrl: http://192.168.8.128:5001/create_face_model
     checkinUrl: http://192.168.8.128:5001/checkin
-    FlaskTaskUrl: http://192.168.8.128:5000/flask/postFrame
-    FlaskFrameUrl: http://192.168.8.128:5000/flask/postTask
+    FlaskTaskUrl: http://192.168.8.128:5000/flask/postTask
+    FlaskFrameUrl: http://192.168.8.128:5000/flask/postFrame
   email:
     system: lin171820@gmail.com
     hr: lin171820@gmail.com
