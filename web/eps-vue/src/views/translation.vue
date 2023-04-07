@@ -135,7 +135,8 @@ export default {
       );
       // 获取图片base64链接
       var image = _this.thisCancas.toDataURL("image/png");
-	  _this.$http("video/fatigueDetection","POST",{photo: _this.image},true,function(resp) {
+	  console.log(image)
+	  _this.$http("video/test","POST",{photo: image},true,function(resp) {
 		  _this.image = resp.image
 	  })
       _this.serverVideo = _this.image;//赋值并预览图片

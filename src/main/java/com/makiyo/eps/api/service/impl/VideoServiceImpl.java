@@ -58,9 +58,14 @@ public class VideoServiceImpl implements VideoService {
         HttpRequest httpRequest = HttpUtil.createPost(flaskFrameUrl);
         JSONObject object = new JSONObject();
         object.put("id",id);
-        //获取图片
-        object.put("frame",data);
-
+        //截取图片
+        String image = data.split(",")[1];
+        object.put("frame",image);
+        //发送请求
+        httpRequest.body(object.toJSONString());
+        HttpResponse httpResponse = httpRequest.execute();
+        JSONObject result = JSON.parseObject(httpResponse.body());
+        return result.getString("frame");
     }
 
     @Override

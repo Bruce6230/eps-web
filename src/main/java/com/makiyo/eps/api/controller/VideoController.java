@@ -1,5 +1,6 @@
 package com.makiyo.eps.api.controller;
 
+import com.makiyo.eps.api.controller.form.ImageForm;
 import com.makiyo.eps.api.service.VideoService;
 import com.makiyo.eps.api.utils.Response;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -45,10 +46,12 @@ public class VideoController {
         return response;
     }
     @PostMapping("/test")
-    public Response test()
+    public Response test(@RequestBody ImageForm imageForm)
     {
+        String temp = imageForm.getPhoto();
+        String base64Data = temp.split(",")[1];
+        System.out.println(base64Data);
         Response response = new Response();
-        response.put("message","成果");
         return response;
     }
 }
