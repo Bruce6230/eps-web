@@ -17,6 +17,7 @@ public class VideoController {
     @Autowired
     private VideoService videoService;
 
+    //疲劳检测测
     @PostMapping("/fatigueDetection")
     public Response fatigueDetection(@RequestBody Map<String,String> map) {
         String image = videoService.fatigueDetection(map.get("photo"));
@@ -43,7 +44,7 @@ public class VideoController {
         response.put("video",result);
         return response;
     }
-    @GetMapping("/test")
+    @PostMapping("/test")
     public Response test()
     {
         Response response = new Response();
