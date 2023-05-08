@@ -224,6 +224,24 @@
 							<span slot="title">Chatgpt</span>
 						</el-menu-item>
 					</el-submenu>
+					
+					<el-submenu
+						index="ChatRoom"
+						:popper-class="'site-sidebar--' + sidebarLayoutSkin + '-popper'"
+					>
+						<template #title>
+							<SvgIcon name="chat_room" class="icon-svg" />
+							<span slot="title">ChatRoom</span>
+						</template>
+						<el-menu-item
+							index="ChatRoom"
+							@click="$router.push({ name: 'ChatRoom' })"
+							ref="ABC"
+						>
+							<SvgIcon name="chat_room" class="icon-svg" />
+							<span slot="title">聊天室</span>
+						</el-menu-item>
+					</el-submenu>
 				</el-menu>
 			</div>
 		</aside>

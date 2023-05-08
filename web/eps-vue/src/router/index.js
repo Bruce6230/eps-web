@@ -24,7 +24,7 @@ import Translation from "../views/translation.vue"
 import Chatgpt from "../views/chatgpt.vue"
 import Microexpressions from "../views/microexpressions.vue"
 import FireDetection from "../views/fire_detection.vue"
-
+import ChatRoom from "../views/chat_room.vue"
 
 const routes = [{
 		path: '/login',
@@ -192,6 +192,15 @@ const routes = [{
 				component: Chatgpt,
 				meta: {
 					title: 'Chatgpt',
+					isTab: true
+				}
+			},
+			{
+				path: '/chat_room',
+				name: 'ChatRoom',
+				component: ChatRoom,
+				meta: {
+					title: '聊天室',
 					isTab: true
 				}
 			}

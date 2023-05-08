@@ -8,12 +8,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.makiyo.eps.api.service.VideoService;
 import com.makiyo.eps.api.utils.Response;
-import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 
 @Service
 public class VideoServiceImpl implements VideoService {
@@ -78,15 +74,37 @@ public class VideoServiceImpl implements VideoService {
     }
 
     @Override
-    public String microExpressions(MultipartFile videoFile) throws IOException {
-        //接收均为base64格式
-        byte[] fileContent = videoFile.getBytes();
-        String video = Base64.encodeBase64String(fileContent);
-        HttpRequest request = HttpUtil.createPost(flaskTaskUrl);
-        request.form("videoFile",videoFile);
-        HttpResponse response = request.execute();
-        String body = response.body();
-        return body;
+    public String microExpressions(String data){
+        String base64Data = data.split(",")[1];
+        JSONObject jsonObj = new JSONObject();
+        jsonObj.put("type", "distractedDrivingDetect");
+        jsonObj.put("callingDistThresh", 0.25);
+        jsonObj.put("eating_smokingDistThresh", 0.25);
+        String json = jsonObj.toString();
+        HttpResponse response = HttpRequest.post(flaskTaskUrl)
+                .header("Content-Type", "application/json")
+                .body(json)
+                .execute();
+        // 获取响应结果
+        String result = response.body();
+        Response response1 = new Response();
+        response1.put("key",result);
+        JSONObject jsonObject1 = JSON.parseObject(result);
+        String id = jsonObject1.getString("id");
+        JSONObject jsonobject = new JSONObject();
+        //用来请求处理后图片
+        jsonobject.put("id",id);
+        //截取图片
+        jsonobject.put("frame",base64Data);
+        //发送请求
+        HttpResponse httpResponse = HttpUtil.createPost(flaskFrameUrl)
+                .header("Content-Type", "application/json")
+                .body(jsonobject.toJSONString())
+                .execute();
+        JSONObject parseObject = JSON.parseObject(httpResponse.body());
+        response1.put("image",parseObject.get("frame"));
+        String frame = "data:image/jpeg;base64,"+parseObject.get("frame").toString();
+        return frame;
     }
 
     @Override

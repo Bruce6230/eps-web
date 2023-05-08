@@ -12,7 +12,7 @@
                     <el-col :span="12">
                         <div class="right">
                             <div class="title-container">
-                                <h2>WC智云</h2>
+                                <h2>AI综合分析管理云平台</h2>
                                 <span>( Ver 1.0 )</span>
                             </div>
                             <div v-if="!qrCodeVisible">

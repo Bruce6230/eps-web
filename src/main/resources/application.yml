@@ -75,7 +75,7 @@ mybatis:
 logging:
   level:
     root: info
-    com.example.emos.wx.db.dao: warn
+    com.makiyo: warn
   pattern:
     console: "%d{yyyy/MM/dd HH:mm:ss}  %-5level  %msg%n"
 
@@ -122,4 +122,4 @@ chatgpt:
   chatEndpoint: ###
   apiKey: ###
 env: test
-authorization: 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
+authorization: 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

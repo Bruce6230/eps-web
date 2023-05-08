@@ -11,8 +11,10 @@ import com.makiyo.eps.api.service.VideoService;
 import com.makiyo.eps.api.utils.Response;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 
@@ -34,13 +36,11 @@ public class VideoController {
     }
 
     @PostMapping("/microExpressions")
-    public Response microExpressions(@RequestParam("videoFile") MultipartFile videoFile) throws IOException {
+    public Response microExpressions(@RequestBody ImageForm imageForm) throws IOException {
+        String temp = imageForm.getPhoto();
+        String image = videoService.microExpressions(temp);
         Response response = new Response();
-        if (videoFile.isEmpty()) {
-            return response;
-        }
-        String result = videoService.microExpressions(videoFile);
-        response.put("video",result);
+        response.put("photo",image);
         return response;
     }
 
